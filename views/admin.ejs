@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Admin</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="utf-8">
+    <link rel='stylesheet' href='/css/bootstrap.css'>
+    <link rel='stylesheet' href='/css/style.css'>
+    <script src="/js/jquery-1.11.2.min.js" type="text/javascript"></script>
+	<script src="/js/bootstrap.js" type="text/javascript"></script>
+    <script>
+    var logoutPrefix = "/admin";
+    </script>
+	<script src="/js/timer.js" type="text/javascript"></script>
+  </head>
+  <body>
+    <nav class="navbar navbar-default" >
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#Navbar"><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></button>
+      <div class="collapse navbar-collapse" id="Navbar">
+        <ul class="nav navbar-nav navbar-left">
+          <li><a href="/admin" title="Home" style="font-size:160%;"><span class="glyphicon glyphicon-home"></span></a></li>
+        </ul>
+        
+        <ul class="nav navbar-nav navbar-right" style="margin-right:0%">
+          <li><a href="/admin/logout" id="logout"  title="Logout" style="border-radius:1em"><span class="glyphicon glyphicon-log-out"></span>&nbsp;&nbsp;Logout</a></li>
+        </ul>
+      </div>
+    </nav>
+    
+    
+    <style>
+      .nav-pills > li.active > a,
+      .nav-pills > li.active > a:hover,
+      .nav-pills > li.active > a:focus {
+        color: #fff;
+        background-color: orange;
+      }
+    </style>
+    
+    <div class="row">
+      
+      <div class="col-lg-2">
+        <!--Options on the left side of the webpage-->
+        <ul class="nav nav-pills nav-stacked">
+          <li class="active"><a data-toggle="tab" href="#home">Home</a></li>
+          <li><a data-toggle="tab" href="#add">Add Skill</a></li>
+          <li><a data-toggle="tab" href="#delete">Delete Skill</a></li>
+          <li><a data-toggle="tab" href="#associate">Associate Employee</a></li>
+          <li><a data-toggle="tab" href="#disassociate">Disassociate Employee</a></li>
+          <li><a data-toggle="tab" href="#users">Add/Remove Users</a></li>
+          <li><a href="/reports">Reports</a></li>
+        </ul>
+        
+      </div>
+      
+      <div class="col-lg-9">
+        
+        <div class="tab-content">
+          <div id="home" class="tab-pane fade in active" style="font-weight:bold"><h1 style="font-weight:bold;font-size:4em">Welcome Admin!</h1><br>Note: The session is of only 10 minutes</div>
+          
+          <!--ADD SKILL TAB-->
+          <div id="add" class="tab-pane fade">
+            <div class="row row-cen">
+              
+              <!--Add skill form (submitted using ajax request)-->
+              <div class="col-lg-6 col-cen">
+                <legend>Add Skill</legend>
+                
+                <fieldset style="color:blue">Note: The contents are case sensitive</fieldset><br>
+                
+                <fieldset>
+                  <label style="font-size:130%;">Role:</label><br>
+                  <input class="form-control" id="role" name="role" placeholder="Enter the role (Ex: Developer)" required>
+                </fieldset><br>
+                
+                <fieldset>
+                  <label style="font-size:130%;">Skill Name:</label><br>
+                  <input class="form-control" id="name" name="name" placeholder="Enter the skill name (Ex: Coding)" required>
+                </fieldset><br>
+                
+                <fieldset>
+                  <label  style="font-size:130%;">Skill Type:</label><br>
+                  <input class="form-control" id="type" name="type" placeholder="Enter the skill type (Ex: java)" required>
+                </fieldset><br>
+            
+                <button class="btn btn-warning" id="submit">Submit</button>
+                <br>
+                <p id="add-note"></p>
+              </div>
+            </div>
+          </div>  
+          <!--/ADD SKILL TAB-->
+          
+          <!--DELETE SKILL TAB-->
+          <div id="delete" class="tab-pane fade">
+            
+            <!--Table for the list of skills-->
+            <table class="table table-striped">
+              <thead>
+                <tr>  
+                  <th style="font-size:115%">Role</th>
+                  <th style="font-size:115%">Skill</th>
+                  <th style="font-size:115%">Type</th>
+                  <th style="font-size:115%"></th>
+                </tr>
+              </thead>
+              <tbody>
+                <% for(i=0;i<skills.length;i++) { %>
+                <% for(j=0;j<skills[i].name.length;j++) { %>
+                <% for(k=0;k<skills[i].name[j].skillType.length;k++) { %>
+                <tr>
+                  <td><%=skills[i].role%></td>
+                  <td><%=skills[i].name[j].skillName%></td>
+                  <td><%=skills[i].name[j].skillType[k]%></td>
+                  <td><a class="btn btn-danger delete-skill" data-id="<%=skills[i]._id%>" data-role="<%=skills[i].role%>" data-name="<%=skills[i].name[j].skillName%>" data-type="<%=skills[i].name[j].skillType[k]%>">Delete</a></td>
+                </tr>
+                <% } %>  
+                <% } %>
+                <% } %>
+              </tbody>
+            </table>
+            
+            <!--Modal for deleting skill-->
+            <div class="modal fade" id="delete-skill-modal" role="dialog" style="margin-top:5em;">
+              <div class="modal-dialog">
+                <div class="modal-content">
+                  <div class="modal-header" style="background:red">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title" style="color:white;">Do you really want delete this?</h4>
+                  </div>
+                  <div class="modal-body modal-body-skill">
+                    <p>Loading</p>
+                  </div>
+                  <div class="modal-footer">
+                    <span id="modal-note" style="color:red;"></span>
+                    <button id="modal-delete-btn" data-request="" type="button" class="btn btn-danger">Delete</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!--/Modal for deleting skill-->
+          </div>  
+          <!--/DELETE SKILL TAB-->
+          
+          <!--ASSICIATE EMPLOYEE TAB-->
+          <div id="associate" class="tab-pane fade">
+            
+            <!--Table for the list of employees and their manager-->
+            <table class="table table-striped">
+              <thead>
+                <tr>  
+                  <th style="font-size:115%">Employee</th>
+                  <th style="font-size:115%">Manager</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                <% for(i=0;i<users.length;i++) { %>
+                <tr>
+                  <td><%=users[i].name%> (<%=users[i].email%>)</td>
+                  <% pos=mId.indexOf(users[i].connectedTo[0]);%>
+                  <% if(pos!=-1) { %>
+                  <td><%=mUser[pos].name%> (<%=mUser[pos].email%>)</td>
+                  <%} else {%>
+                  <td style="color:red">Not associated</td>
+                  <% } %>
+                  <td id="<%=users[i]._id%>"><button class="btn btn-info change-asso" data-userid="<%=users[i]._id%>">Change Association</button></td>
+                </tr>
+                <% } %>
+              </tbody>
+            </table>
+            
+            <div id="manager-list-dd" style="display:none"><% for(i=0;i<mUser.length;i++) { %><option value="<%=mIdRaw[i]%>"><%=mUser[i].name%></option><% } %></div>
+            
+          </div>  
+          <!--/ASSOCIATE EMPLOYEE TAB-->
+          
+          <!--DISASSOCIATE EMPLOYEE TAB-->
+          <div id="disassociate" class="tab-pane fade">
+            
+            <!--Table for the list of employees with their managers-->
+            <table class="table table-striped">
+              <thead>
+                <tr>  
+                  <th style="font-size:115%">Employee</th>
+                  <th style="font-size:115%">Manager</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                <% for(i=0;i<users.length;i++) { %>
+                <tr>
+                  <td><%=users[i].name%> (<%=users[i].email%>)</td>
+                  <% pos=mId.indexOf(users[i].connectedTo[0]);%>
+                  <% if(pos!=-1){ %>
+                  <td><%=mUser[pos].name%> (<%=mUser[pos].email%>)</td>
+                  <%} else {%>
+                  <td style="color:red">Not associated</td>
+                  <% } %>
+                  <td><button class="btn btn-danger disassociate" data-name="<%=users[i].name%>"  data-userid="<%=users[i]._id%>">Disassociate</button></td>
+                </tr>
+                <% } %>
+              </tbody>
+            </table>
+            
+            <!--Modal for disassociating-->
+            <div class="modal fade" id="disassociate-modal" role="dialog" style="margin-top:5em;">
+              <div class="modal-dialog">
+                <div class="modal-content">
+                  <div class="modal-header" style="background:red">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title modal-title-disasso" style="color:white;">Do you really want to disassociate?</h4>
+                  </div>
+                  <div class="modal-body modal-body-disassociate" style="color:green;">
+                    <p><b>Note: </b>You can associate with another manager later</p>
+                  </div>
+                  <div class="modal-footer">
+                    <span id="modal-note" style="color:red;"></span>
+                    <button id="modal-disassociate-btn" data-request="" class="btn btn-danger">Disassociate</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!--/Modal for disassociating-->
+            
+          </div>
+          <!--/DISASSOCIATE EMPLOYEE TAB-->
+          
+          
+          <!--ADD/REMOVE USERS-->
+          <div id="users" class="tab-pane fade">
+          
+            <div class="row">
+              <div class="col-lg-3">
+                <ul class="nav nav-pills nav-stacked">
+                  <li class="active"><a data-toggle="tab" href="#E">Add Employee</a></li>
+                  <li><a data-toggle="tab" href="#M">Add Manager</a></li>
+                  <li><a data-toggle="tab" href="#rE">Remove Employee</a></li>
+                  <li><a data-toggle="tab" href="#rM">Remove Manager</a></li>
+                </ul>
+              </div>  
+            
+              <div class="col-lg-9" style="text-align:center;">
+              
+                <div class="tab-content">
+                
+                  <!--ADD EMPLOYEE-->
+                  <div id="E" class="tab-pane fade in active">
+                    <div class="row row-cen">
+                      <div class="col-lg-6 col-cen">
+                        <legend style="font-size:150%;">Add Employee</legend>
+                        <fieldset>
+                          <label style="font-size:120%;">Name:</label><br>
+                          <input class="form-control" id="eName" type="text" placeholder="Enter the Full name" required>
+                        </fieldset><br>
+                  
+                        <fieldset>
+                          <label style="font-size:120%;">email:</label><br>
+                          <input class="form-control" id="eemail" type="text" placeholder="Enter the email" required>
+                        </fieldset><br>
+                  
+                        <fieldset>
+                          <label style="font-size:120%;">Password:</label><br>
+                          <input class="form-control" id="ePassword" type="password"  placeholder="Enter the password" required>
+                        </fieldset><br>
+                  
+                        <fieldset>
+                          <label style="font-size:120%;">Manager</label><br>
+                          <select id="eManager" class="btn btn-default manager-list-val">
+                            <option value="select">Select Manager</option>
+                            <% for(i=0;i<mUser.length;i++) { %>
+                            <option value="<%=mIdRaw[i]%>"><%=mUser[i].name%></option>
+                            <% } %>
+                          </select>
+                        </fieldset><br>
+                  
+                        <button id="addEmployee" class="btn btn-primary">Add</button>
+                  
+                      </div>
+                    </div>
+                  </div>
+                  <!--/ADD EMPLOYEE-->
+                
+                
+                  <!--/ADD MANAGER-->
+                  <div id="M" class="tab-pane fade">
+                    <div class="row row-cen">
+                      <div class="col-lg-6 col-cen">
+                        <legend style="font-size:150%">Add Manager</legend>
+                        <fieldset>
+                          <label style="font-size:120%">Name:</label><br>
+                          <input class="form-control" id="mName" type="text" placeholder="Enter the Full name" required>
+                        </fieldset><br>
+                  
+                        <fieldset>
+                          <label style="font-size:120%">email:</label><br>
+                          <input class="form-control" id="memail" type="text" placeholder="Enter the email" required>
+                        </fieldset><br>
+                  
+                        <fieldset>
+                          <label style="font-size:120%">Password:</label><br>
+                          <input class="form-control" id="mPassword" type="password" placeholder="Enter   the password" required>
+                        </fieldset><br>
+                  
+                        <button id="addManager" class="btn btn-primary">Add</button>
+                  
+                      </div>
+                    </div>
+                  
+                  </div>
+                  <!--ADD MANAGER-->
+                
+                  <!--REMOVE EMPLOYEE-->
+                  <div id="rE" class="tab-pane fade">
+                    
+                    <!--Table for the list of employees-->
+                    <table class="table table-striped">
+                      <thead>
+                        <tr>  
+                          <th style="text-align:center;font-size:115%">Employee</th>
+                          <th>&nbsp;</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <% for(i=0;i<users.length;i++) { %>
+                        <tr>
+                          <td><%=users[i].name%> (<%=users[i].email%>)</td>
+                          <td><button class="btn btn-danger rem-emp" data-name="<%=users[i].name%>" data-userid="<%=users[i]._id%>">Remove</button></td>
+                        </tr>
+                        <% } %>
+                      </tbody>
+                    </table>
+                  
+                  
+                    <!--Modal for removing employee-->
+                    <div class="modal fade" id="remove-employee-modal" role="dialog" style="margin-top:5em;">
+                      <div class="modal-dialog">
+                        <div class="modal-content">
+                          <div class="modal-header" style="background:red">
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                            <h4 class="modal-title modal-title-rem-emp" style="color:white;">Do you really want to remove?</h4>
+                          </div>
+                          <div class="modal-body modal-body-rem-emp" style="color:green;">
+                            <p><b>Note: </b>You can add this employee again later but all the previous data will be lost</p>
+                          </div>
+                          <div class="modal-footer">
+                            <span id="modal-note" style="color:red;"></span>
+                            <button id="modal-rem-emp-btn" data-request="" class="btn btn-danger">Remove</button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <!--/Modal for removing employee-->
+                  </div>
+                  <!--/REMOVE EMPLOYEE-->
+                
+                
+                  <!--REMOVE MANAGER-->
+                  <div id="rM" class="tab-pane fade">
+                  
+                    <!--Table for the list of managers-->
+                    <table class="table table-striped">
+                      <thead>
+                        <tr>  
+                          <th style="text-align:center;font-size:115%">Manager</th>
+                          <th>&nbsp;</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <% for(i=0;i<mUser.length;i++) { %>
+                        <tr>
+                          <td><%=mUser[i].name%> (<%=mUser[i].email%>)</td>
+                          <td><button class="btn btn-danger rem-man" data-name="<%=mUser[i].name%>" data-userid="<%=mUser[i]._id%>">Remove</button></td>
+                        </tr>
+                        <% } %>
+                      </tbody>
+                    </table>
+                  
+                  
+                    <!--Modal for removing manager-->
+                    <div class="modal fade" id="remove-manager-modal" role="dialog" style="margin-top:5em;">
+                      <div class="modal-dialog">
+                        <div class="modal-content">
+                          <div class="modal-header" style="background:red">
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                            <h4 class="modal-title modal-title-rem-man" style="color:white;">Do you really want to remove?</h4>
+                          </div>
+                          <div class="modal-body modal-body-rem-man" style="color:green;">
+                            <p><b>Note: </b>You can add this manager again later but all the previous data will be lost</p>
+                          </div>
+                          <div class="modal-footer">
+                            <span id="modal-note" style="color:red;"></span>
+                            <button id="modal-rem-man-btn" data-request="" class="btn btn-danger">Remove</button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <!--/Modal for removing manager-->
+                  </div>
+                  <!--/REMOVE MANAGER-->
+                </div>
+              </div>  
+            </div>
+          
+          </div>
+          <!--/ ADD/REMOVE USERS-->
+          
+          
+        </div>
+      </div>
+    </div>
+    <script src="/js/jquery-admin.js" type="text/javascript"></script>
+    
+    
+    <script>
+    $(document).ready(function(){
+      $("button,a").click(function(){
+        $.post('/adminCookieStatus',function(data){
+          if(data){
+            location.reload();
+          }
+        });
+      });
+    });
+    </script>
+  </body>
+</html>

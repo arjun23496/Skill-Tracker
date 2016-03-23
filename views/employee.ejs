@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Home</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="utf-8">
+    <link rel='stylesheet' href='/css/bootstrap.css'>
+    <link rel='stylesheet' href='/css/style.css'>
+    <script src="/js/jquery-1.11.2.min.js" type="text/javascript"></script>
+	<script src="/js/bootstrap.js" type="text/javascript"></script>
+	<script src="/js/jquery-home.js" type="text/javascript"></script>
+    <script>
+    var logoutPrefix = "";
+    </script>
+	<script src="/js/timer.js" type="text/javascript"></script>
+  </head>
+  
+  <body>
+    
+    <nav class="navbar navbar-default" style="margin-bottom:-1em">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#Navbar"><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></button>
+      <div class="collapse navbar-collapse" id="Navbar">
+        <ul class="nav navbar-nav navbar-left">
+          
+          <li><a href="/" title="Home" style="font-size:160%;"><span class="glyphicon glyphicon-home"></span></a></li>
+          
+          <li><a class="g-user"><span class="glyphicon glyphicon-user"></span>&nbsp;<%=user.name%></a></li>
+        </ul>
+        
+        
+        <ul class="nav navbar-nav navbar-right" style="margin-right:0%">
+
+          <li id="n"><a href="#"  style="padding-top:0.6em;color:#00ccff" data-trigger="focus" data-toggle="popover"  data-placement="bottom">
+            <span class="glyphicon glyphicon-bell" style="font-size:190%;"></span>
+            <span class="badge" style="font-size:85%;<%if(user.Updated) { %>background:red<%}%>">7</span>
+          </a></li>
+
+          <li><a href="/logout" id="logout"  title="Logout" style="border-radius:1em"><span class="glyphicon glyphicon-log-out"></span>&nbsp;&nbsp;Logout</a></li>
+          
+        </ul>
+      </div>
+    </nav>
+
+    <!--Notification panel content-->
+    <div id="popover-content" class="hide">
+      <table class="table table-hover">
+        <tbody>
+          <% var count = 0 ; for(i=user.Updates.length-1;i>=0;i--){ %>
+          <tr>
+            <td style="border:0;border-bottom:1px solid grey;<%if(!user.Updates[i].seen)  {%>color:#007399;font-weight:bold<% count++;} else {%>color:black;<%}%>">
+              <span style="font-size:110%"><%=user.Updates[i].notify%></span><br><span  style="color:grey;"><%=user.Updates[i].createdDate%></span>  
+            </td>
+          </tr>
+          <% } %>
+          <% if(!user.Updates.length){ %>
+          <tr>
+            <td style="color:black">None yet...</td>
+          </tr>
+          <% } %>
+        </tbody>
+      </table>
+    </div>
+    
+    <script src="/js/jquery-seen.js" type="text/javascript"></script>
+
+    <script>
+      $(document).ready(function(){
+
+        $(".badge").html("<%=count%>");
+
+        $("[data-toggle=popover]").popover({
+          html : true,
+          content: function() {
+            return $("#popover-content").html();
+          },
+          
+          container: 'body',
+          
+          title: function() {
+              return "<b>Notifications</b>";
+          }
+        });
+
+      });
+    </script>
+    
+    <br><br>
+    
+    <div class="row">
+    <div class="col-lg-2">
+      <!--List of choices on left side of the webpage-->
+      <ul class="nav nav-pills nav-stacked">
+        <li class="active"><a data-toggle="tab" href="#home">Home</a></li>
+        <li><a data-toggle="tab" href="#view">View Skills</a></li>
+        <li><a data-toggle="tab" href="#edit">Edit Skills</a></li>
+        <li><a data-toggle="tab" href="#add">Add Skills</a></li>
+      </ul>  
+    </div>
+      
+      
+    <div class="col-lg-9">
+      <div class="tab-content">
+        
+        <!--Welcome-->
+        <div id="home" class="tab-pane fade in active">
+        
+        <h1 style="font-weight:bold;font-size:4em;text-align:center">Welcome <%=user.name%>!</h1>
+        </div>
+        
+        <!--View Skills-->
+        <div id="view" class="tab-pane fade">
+          <div class="container-fluid">
+          <div class="panel panel-default">
+            <div class="panel-heading">View Skills</div>
+            <div class="panel-body" id="read<%=user._id%>">
+            
+              
+              
+              
+            </div>
+          </div>
+        </div>
+        </div>
+        
+        <!--Edit Skills-->
+        <div id="edit" class="tab-pane fade">
+          <div class="container-fluid">
+          <div class="panel panel-info">
+            <div class="panel-heading">Edit Skills</div>
+            <div class="panel-body" id="<%=user._id%>">
+            
+            </div>
+          </div>
+        </div>
+        </div>
+        <script src="/js/jquery-employee.js" type="text/javascript"></script>
+        <script>
+        $(document).ready(function(){
+          getEmpData("<%=user._id%>");
+          getEmpData_read("<%=user._id%>");
+        });
+        </script>
+        
+        <!--Add Skill-->
+        <div id="add" class="tab-pane fade">
+          
+          
+          
+          <div class="container-fluid">
+          <div class="panel panel-success">
+            <div class="panel-heading">Add Skill</div>
+            <div class="panel-body">
+              <span id="add-skill">
+                
+              </span>&nbsp;
+          
+              <span id="skillDD"></span>&nbsp;
+              <span id="typeDD"></span>&nbsp;
+              <span id="levelDD"></span>&nbsp;
+              <span id="submit-btn"></span>
+            </div>
+            </div>
+          </div>
+          
+          
+          <div class="container-fluid">
+          <div class="panel panel-default">
+            <div class="panel-heading">Skills added in this session</div>
+            <div class="panel-body" id="session-skills">
+            None...
+            </div>
+            </div>
+          </div>
+          
+          
+          
+        </div>
+            
+            
+<div class="hide" id="skill-roles"><% for(i=0;i<skills.length;i++) { %><option value="<%=skills[i].role%>"><%=skills[i].role%></option><% } %></div>            
+<!--Script for Add Skill-->            
+<script type="text/javascript">
+  
+  function addSkillOptions(){
+    
+    $("#add-skill").html('<select id="role" name="role" class="btn btn-default"><option value="select">Select Role</option>'+$("#skill-roles").html()+'</select>');
+    
+    forRoles();
+    
+  }
+  
+
+  function forRoles(){
+      
+  $("#role").change(function(){
+    $("#skillDD").html("");
+    $("#levelDD").html("");
+    $("#typeDD").html("");
+    $("#submit-btn").html("");
+
+    <% for(i=0;i<skills.length;i++) { %>
+      if($(this).val()=="<%=skills[i].role%>"){
+      $("#skillDD").append('<select id="skill" name="skill" class="btn btn-default"><option   value="select">Select Skill</option>'<% for(j=0;j<skills[i].name.length;j++) { %>+'<option   value="<%=skills[i].name[j].skillName%>"><%=skills[i].name[j].skillName%></option>'<% } %>+'</select>');
+    }
+    <% } %>  
+
+
+    forSkills();
+            
+  });
+  
+  }
+  
+  function forSkills(){
+    $("#skill").change(function(){
+      $("#submit-btn").html("");        
+      $("#levelDD").html("");
+      $("#typeDD").html("");
+
+      <% for(i=0;i<skills.length;i++) { %>
+        <% for(j=0;j<skills[i].name.length;j++) { %>
+          if($(this).val()=="<%= skills[i].name[j].skillName %>" && $("#role").val()=="<%=skills[i].role%>"){
+         $("#typeDD").append('<select id="type" name="type" class="btn btn-default"><option value="select">Select type</option>'<% for(k=0;k<skills[i].name[j].skillType.length;k++) { %>+'<option   value="<%=skills[i].name[j].skillType[k]%>"><%=skills[i].name[j].skillType[k]%></option>'<% } %>+'</select>');
+          }
+        <% } %>
+      <% } %> 
+
+      forLevels();
+              
+    });
+  }
+  
+  function forLevels(){
+    $("#type").change(function(){
+      $("#levelDD").html("");
+      $("#submit-btn").html("");
+      if($(this).val()!="select"){
+        $("#levelDD").append('<select id="level" name="level" class="btn btn-default"><option value="select">Select level</option><option value="Beginner">Beginner</option><option value="Intermediate">Intermediate</option><option value="Expert">Expert</option></select>');
+      }
+            
+      forSubmit();
+    });
+  }
+  
+  function forSubmit(){
+    $("#level").change(function(){
+      $("#submit-btn").html("");
+        if($(this).val()!="select"){
+          $("#submit-btn").append('<button id="submit-skill" type="submit" value="submit" form="skillSubmit" class="btn btn-primary">Submit</button>&nbsp;');
+        }
+      
+      submit();
+      
+    });
+  }
+      
+  function submit(){
+    $("#submit-skill").click(function(){
+      var r = $("#role").val();
+      var n = $("#skill").val();
+      var t = $("#type").val();
+      var l = $("#level").val();
+      
+      $(".submitting").html("");
+      $("#submit-btn").append('<span style="color:blue" class="submitting">Submitting</span>');
+      $.post('/user/skillSubmit' , { role:r , skill:n ,type:t , level:l } , function(data){
+        if(data){
+          $("#add-skill").html("");
+          $("#skillDD").html("");
+          $("#typeDD").html("");
+          $("#levelDD").html("");
+          $("#submit-btn").html("");
+          addSkillOptions();
+          sessionSkills("<%=user._id%>");
+          getEmpData("<%=user._id%>");
+          getEmpData_read("<%=user._id%>");
+        }
+        else{
+          $(".submitting").html("");
+          $("#submit-btn").append('<b style="color:red" class="submitting">Already Exists!</b>');
+        }
+      });
+      
+    });
+  }
+
+  
+  $(document).ready(function(){
+    addSkillOptions();
+    sessionSkills("<%=user._id%>");
+  });
+
+</script>
+      
+            
+        
+      </div>  
+      </div>
+    </div>
+    
+    <script>
+    $(document).ready(function(){
+      $("button,a").click(function(){
+        $.post('/cookieStatus',function(data){
+          if(data){
+            location.reload();
+          }
+        });
+      });
+    });
+    </script>
+    
+    
+  </body>
+</html>

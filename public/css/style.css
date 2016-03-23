@@ -1,0 +1,107 @@
+body{
+    background: white;
+    font-family: sans-serif;
+    font-family: 'Open Sans', sans-serif;
+}
+
+
+a:hover{
+  cursor: pointer;
+}
+
+.navbar{
+    background-color:#e6e6e6;
+    border-radius:0;
+}
+
+.row-cen {
+    text-align:center;
+}
+
+.col-cen {
+    display:inline-block;
+    float:none;
+}
+
+#login{
+    border-top: 2px solid #00ccff;
+}
+
+.login-head{
+    color: black;
+    font-weight: bold;
+    background: #00ccff;
+    padding: 0.5em;
+    text-align: center;
+}
+
+.close{
+    font-size: 220%;
+}
+
+.su-label{
+    font-size: 130%;
+}
+
+.form-btn{
+    border-radius: 0;
+    font-size: 130%;
+    font-weight: bold;
+    margin: 0.5em 0;
+    width: 7em;
+}
+
+.form-btn:hover{
+    box-shadow: 0 4px 10px black,0 0px 0px black;
+}
+
+.panel-heading{
+  font-weight: bold;
+  font-size: 120%;
+}
+
+legend{
+  text-align:center;
+  font-weight: bold;
+  font-size: 1.7em;
+}
+
+#logout{
+    -webkit-transition-timing-function: ease-in-out;
+    transition-timing-function: ease-in-out;
+    transition: background 0.6s;
+  font-weight: bold;
+}
+
+#logout:hover{
+  background: #00ccff;
+  color: white;
+}
+
+.popover {
+  border: 2px solid #00ccff;
+  max-width:600px;
+}
+
+.popover-title {
+  background-color: #00ccff; 
+  color: #FFFFFF; 
+  text-align:center;
+}
+
+.popover-content {
+  background-color: #e6e6e6;
+  color: #FFFFFF;
+  max-height:30em; 
+  overflow:scroll;
+  padding: 25px;
+}
+  
+.g-user{
+  font-size:120%;
+  font-weight: bold;
+}
+
+.g-user:hover{
+  cursor: none;
+}

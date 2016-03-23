@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Admin</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="utf-8">
+    <link rel='stylesheet' href='/css/bootstrap.css'>
+    <link rel='stylesheet' href='/css/style.css'>
+    <script src="/js/jquery-1.11.2.min.js" type="text/javascript"></script>
+	<script src="/js/bootstrap.js" type="text/javascript"></script>
+  </head>
+  <body>
+    <div class="row row-cen">
+      <div class="col-lg-4 col-cen" style="margin-top:5em">
+        <div class="panel panel-primary">
+          <div class="panel-heading">Admin Password</div>
+          <div class="panel-body">
+            <form action="/admin/adminLogin" method="post">
+              <div class="input-group">
+                <input name="password" type="password" class="form-control" placeholder="Admin password">
+                <span class="input-group-btn">
+                  <button class="btn btn-secondary" type="submit" value="submit">Go!</button>
+                </span>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
