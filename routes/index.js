@@ -45,92 +45,53 @@ router.get('/', function(req, res, next) {
 
 /* This block is to validate the Login event */
 router.post('/login',function(req,res,next){
+
+  /*
+  email = email entered in the form
+  password = password entered in the form
+  */
   var email = req.body.email;
+  var password = req.body.password;
 
-  User.findOne({email:email} , function(err,user){
-    if(!user){
-      res.send("Invalid credentials");
-    }
-    else{
+  /*===============
+  
+  Do your LDAP authentication here
 
-      var c = obj.encrypt(user.email , obj.cookieKey);
-      res.cookie('user' , c , {signed:true});
+  =================*/
 
-      if(user.sessionSkills.length){
-        user.sessionSkills.splice(0,user.sessionSkills.length);
-           user.save(function(err){
-             if(err) throw err;
-          res.redirect('/user');
-      });
-           
-      } else {
-        res.redirect('/user');
+  //var verified = /* boolean after authentication */;
+
+
+  if(verified){
+
+    User.findOne({email:email} , function(err,user){
+      if(!user){
+        res.redirect('/');
       }
-    }
-    
-  });
+      else{
 
-});
-
-
-/*
-URL for a manager
-Ex:
-http://localhost:3000/m/Manager1/manager1@email.com
-*/
-router.get('/m/:name/:email' , function(req,res){
-
-  var name = req.params.name;
-  var email = req.params.email;
-  if(name && email){
-    createUser.createManager(name,email,function(){
-      res.cookie('user',obj.encrypt(email,obj.cookieKey) , {signed:true});
-      res.redirect('/user');
-    });
-  } else {
-    res.redirect('/');
-  }
- 
-})
-
-/*
-URL for an employee
-Ex:
-http://localhost:3000/e/Employee1/employee1@email.com/Manager1/manager1@email.com
-*/
-router.get('/e/:name/:email/:mname/:memail',function(req,res){
-
-  var name = req.params.name;
-  var email = req.params.email;
-  var mname = req.params.mname;
-  var memail = req.params.memail;
-
-  if(name && email && mname && memail){
-    createUser.createEmployee(name,email,mname,memail,function(){
-
-      User.findOne({email:email} , function(err,user){
+        var c = obj.encrypt(user.email , obj.cookieKey);
+        res.cookie('user' , c , {signed:true});
 
         if(user.sessionSkills.length){
           user.sessionSkills.splice(0,user.sessionSkills.length);
              user.save(function(err){
                if(err) throw err;
-            res.cookie('user',obj.encrypt(email,obj.cookieKey) , {signed:true});
             res.redirect('/user');
-          });
+        });
+             
         } else {
-          res.cookie('user',obj.encrypt(email,obj.cookieKey) , {signed:true});
-          res.redirect('/user')
+          res.redirect('/user');
         }
-
-      });
+      }
       
     });
   } else {
     res.redirect('/');
   }
 
-  
 });
+
 
 /* To clear the 'user' cookie in the Logout event */
 router.get('/logout',function(req,res,next){
@@ -312,10 +273,10 @@ router.get('/delete',function(req,res){
             if (err) throw err;
             
             Client.remove({}, function(err) {
-            if (err) throw err;
-            
-            res.redirect('/check');    
-          });    
+              if (err) throw err;
+              
+              res.redirect('/check');    
+            });    
           });    
         });     
       });   

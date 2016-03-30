@@ -18,7 +18,7 @@ var obj = require('./obj');
 /* This is to feed the data in the database */
 /* Database name = myappdatabase */
 
-router.get('/users', function(req, res, next) {
+router.get('/', function(req, res, next) {
 
 /* All the temporary data which can be changed later */
 	var users = [

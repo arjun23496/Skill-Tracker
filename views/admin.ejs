@@ -815,7 +815,7 @@
     
     <script>
     $(document).ready(function(){
-      $("button,a").click(function(){
+      $("html").click(function(){
         $.post('/adminCookieStatus',function(data){
           if(data){
             location.reload();
