@@ -1,7 +1,35 @@
-function getEmpData_read(emp){
+
+
+function getEmpData(emp){
+  $("#"+emp).html("loading...");
   $("#read"+emp).html("loading...");
   $.post('/user/getEmployeeData/'+emp,function(data){
-    if(data){
+    
+      
+      
+      $("#"+emp).html("");
+      $("#"+emp).append('<table class="table table-striped">\
+                                 <thead>\
+                                 <tr>  \
+                                 <th>Role</th>\
+                                 <th>Skill</th>\
+                                 <th>Type</th>\
+                                 <th>Level</th> \
+                                 <th>Experience</th><th></th>\
+                                 </tr>\
+                                 </thead><tbody><tr></tr></tbody></table>');
+                      
+        for(i=0;i<data.length;i++){
+          $("#"+emp+" tr:last").after('<tr>\
+                      <td>'+data[i].role+'</td>\
+                      <td>'+data[i].skillName+'</td>\
+                      <td>'+data[i].skillType+'</td>\
+                      <td>'+data[i].level+'</td>\
+                      <td>'+data[i].exp+' yrs</td>\
+                      <td><span id="'+data[i]._id+'">&nbsp;&nbsp;<button class="up-lv btn btn-info" data-skillId="'+data[i]._id+'" data-user="'+emp+'">Update</button></span></td>\
+                      </tr>');
+        }
+      
       $("#read"+emp).html("");
       $("#read"+emp).append('<table class="table table-striped">\
                                  <thead>\
@@ -10,6 +38,7 @@ function getEmpData_read(emp){
                                  <th>Skill</th>\
                                  <th>Type</th>\
                                  <th>Level</th>\
+                                 <th>Experience</th>\
                                  </tr>\
                                  </thead><tbody><tr></tr></tbody></table>');
                       
@@ -19,43 +48,13 @@ function getEmpData_read(emp){
                       <td>'+data[i].skillName+'</td>\
                       <td>'+data[i].skillType+'</td>\
                       <td>'+data[i].level+'</td>\
-                      </tr>');
-        }
-                
-      }
-    });
-  }
-
-
-
-
-function getEmpData(emp){
-  $("#"+emp).html("loading...");
-  $.post('/user/getEmployeeData/'+emp,function(data){
-    if(data){
-      $("#"+emp).html("");
-      $("#"+emp).append('<table class="table table-striped">\
-                                 <thead>\
-                                 <tr>  \
-                                 <th>Role</th>\
-                                 <th>Skill</th>\
-                                 <th>Type</th>\
-                                 <th>Level</th><th></th>\
-                                 </tr>\
-                                 </thead><tbody><tr></tr></tbody></table>');
-                      
-        for(i=0;i<data.length;i++){
-          $("#"+emp+" tr:last").after('<tr>\
-                      <td>'+data[i].role+'</td>\
-                      <td>'+data[i].skillName+'</td>\
-                      <td>'+data[i].skillType+'</td>\
-                      <td>'+data[i].level+'</td><td><span id="'+data[i]._id+'">&nbsp;&nbsp;<button class="up-lv btn btn-info" data-skillId="'+data[i]._id+'" data-user="'+emp+'">Update level</button></span></td>\
+                      <td>'+data[i].exp+' yrs</td>\
                       </tr>');
         }
                                   
 
         uplv();
-      }
+      
     });
   }
 
@@ -74,6 +73,7 @@ function sessionSkills(emp){
                                  <th>Skill</th>\
                                  <th>Type</th>\
                                  <th>Level</th>\
+                                 <th>Experience</th>\
                                  </tr>\
                                  </thead><tbody><tr></tr></tbody></table>');
                       
@@ -83,6 +83,7 @@ function sessionSkills(emp){
                       <td>'+data[i].skillName+'</td>\
                       <td>'+data[i].skillType+'</td>\
                       <td>'+data[i].level+'</td>\
+                      <td>'+data[i].exp+' yrs</td>\
                       </tr>');
         }
                 
@@ -97,7 +98,7 @@ function sessionSkills(emp){
       var skillId = $(this).attr("data-skillId");
       var user = $(this).attr("data-user");
       $("#"+skillId).html("");
-      $("#"+skillId).append('&nbsp;<select id="lv'+skillId+'" class="btn btn-default"><option value="select">Select level</option>  <option value="Beginner">Beginner</option><option value="Intermediate">Intermediate</option>  <option value="Expert">Expert</option></select>&nbsp;<button class="up-lv-submit btn btn-primary" data-skillId="'+skillId+'" data-user="'+user+'">Save</button>&nbsp;<button class="up-lv-cancel btn btn-warning" data-skillId="'+skillId+'" data-user="'+user+'" >Cancel</button>');
+      $("#"+skillId).append('&nbsp;<select id="lv'+skillId+'" class="btn btn-default"><option value="select">Select level</option><option value="Beginner">Beginner</option><option value="Intermediate">Intermediate</option><option value="Expert">Expert</option></select>&nbsp;<select id="exp'+skillId+'" class="btn btn-default"><option value="select">Select Experience(yrs)</option>'+$("#experience-options").html()+'<option value="15+">15+</option></select>&nbsp;<button class="up-lv-submit btn btn-primary" data-skillId="'+skillId+'" data-user="'+user+'">Save</button>&nbsp;<button class="up-lv-cancel btn btn-warning" data-skillId="'+skillId+'" data-user="'+user+'" >Cancel</button>');
               
 
       submitLevel();
@@ -110,17 +111,17 @@ function sessionSkills(emp){
       var skillId = $(this).attr("data-skillId");
       var user = $(this).attr("data-user");
       var level = $("#lv"+skillId).val();
+      var exp = $("#exp"+skillId).val();
       
               
-      if(level!="Beginner" && level!="Intermediate" && level!="Expert"){
+      if(level!="Beginner" && level!="Intermediate" && level!="Expert" && level!="select"){
         alert("Invalid level");
       }
       else{
-        $.post('/user/updateLevel',{skillId:skillId,user:user,level:level},function(dat){
+        $.post('/user/updateLevel',{skillId:skillId,user:user,level:level,exp:exp},function(dat){
           if(dat){
             getEmpData(user);
             sessionSkills(user);
-            getEmpData_read(user);
           } else {
             location.reload();
           }

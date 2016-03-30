@@ -8,13 +8,11 @@
     <link rel='stylesheet' href='/css/style.css'>
     <script src="/js/jquery-1.11.2.min.js" type="text/javascript"></script>
 	<script src="/js/bootstrap.js" type="text/javascript"></script>
-    <script>
-    var logoutPrefix = "/admin";
-    </script>
+    <!--For timer--><script> var logoutPrefix = "/admin"; </script> 
 	<script src="/js/timer.js" type="text/javascript"></script>
   </head>
   <body>
-    <nav class="navbar navbar-default" >
+    <nav class="navbar navbar-default"  style="margin-bottom:0" >
       <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#Navbar"><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></button>
       <div class="collapse navbar-collapse" id="Navbar">
         <ul class="nav navbar-nav navbar-left">
@@ -31,20 +29,21 @@
     <style>
       .nav-pills > li.active > a,
       .nav-pills > li.active > a:hover,
+      .nav-pills > li > a:hover,
       .nav-pills > li.active > a:focus {
-        color: #fff;
+        color: white;
         background-color: orange;
       }
     </style>
     
     <div class="row">
       
-      <div class="col-lg-2">
+      <div class="col-lg-2" style="background:#162f39;height:100vh">
         <!--Options on the left side of the webpage-->
         <ul class="nav nav-pills nav-stacked">
           <li class="active"><a data-toggle="tab" href="#home">Home</a></li>
-          <li><a data-toggle="tab" href="#add">Add Skill</a></li>
-          <li><a data-toggle="tab" href="#delete">Delete Skill</a></li>
+          <li><a data-toggle="tab" href="#add">Add</a></li>
+          <li><a data-toggle="tab" href="#delete">Delete</a></li>
           <li><a data-toggle="tab" href="#associate">Associate Employee</a></li>
           <li><a data-toggle="tab" href="#disassociate">Disassociate Employee</a></li>
           <li><a data-toggle="tab" href="#users">Add/Remove Users</a></li>
@@ -56,11 +55,26 @@
       <div class="col-lg-9">
         
         <div class="tab-content">
-          <div id="home" class="tab-pane fade in active" style="font-weight:bold"><h1 style="font-weight:bold;font-size:4em">Welcome Admin!</h1><br>Note: The session is of only 10 minutes</div>
+          <div id="home" class="tab-pane fade in active" style="font-weight:bold"><h1 style="font-weight:bold;font-size:4em">Welcome Admin!</h1></div>
           
-          <!--ADD SKILL TAB-->
+          <!--ADD TAB-->
           <div id="add" class="tab-pane fade">
-            <div class="row row-cen">
+            <div class="row">
+            <div class="col-lg-3" style="background:#2b5b6e;height:100vh">
+                <ul class="nav nav-pills nav-stacked">
+                  <li class="active"><a data-toggle="tab" href="#aS" class="white">Add Skill</a></li>
+                  <li><a data-toggle="tab" href="#aCert" class="white">Add Certificate</a></li>
+                  <li><a data-toggle="tab" href="#aCli" class="white">Add Client</a></li>
+                </ul>
+              </div> 
+            
+              <div class="col-lg-9">
+                <div class="tab-content">
+                
+            <!--ADD SKILL-->
+            <div id="aS" class="tab-pane fade in active" style="margin-top:1em">
+              
+              <div class="row row-cen">
               
               <!--Add skill form (submitted using ajax request)-->
               <div class="col-lg-6 col-cen">
@@ -88,62 +102,413 @@
                 <p id="add-note"></p>
               </div>
             </div>
-          </div>  
-          <!--/ADD SKILL TAB-->
-          
-          <!--DELETE SKILL TAB-->
-          <div id="delete" class="tab-pane fade">
+              
+            </div>
             
-            <!--Table for the list of skills-->
-            <table class="table table-striped">
-              <thead>
-                <tr>  
-                  <th style="font-size:115%">Role</th>
-                  <th style="font-size:115%">Skill</th>
-                  <th style="font-size:115%">Type</th>
-                  <th style="font-size:115%"></th>
-                </tr>
-              </thead>
-              <tbody>
-                <% for(i=0;i<skills.length;i++) { %>
-                <% for(j=0;j<skills[i].name.length;j++) { %>
-                <% for(k=0;k<skills[i].name[j].skillType.length;k++) { %>
-                <tr>
-                  <td><%=skills[i].role%></td>
-                  <td><%=skills[i].name[j].skillName%></td>
-                  <td><%=skills[i].name[j].skillType[k]%></td>
-                  <td><a class="btn btn-danger delete-skill" data-id="<%=skills[i]._id%>" data-role="<%=skills[i].role%>" data-name="<%=skills[i].name[j].skillName%>" data-type="<%=skills[i].name[j].skillType[k]%>">Delete</a></td>
-                </tr>
-                <% } %>  
-                <% } %>
-                <% } %>
-              </tbody>
-            </table>
+            <!--ADD CERTIFICATE-->
+            <div id="aCert" class="tab-pane fade" style="margin-top:1em">
             
-            <!--Modal for deleting skill-->
-            <div class="modal fade" id="delete-skill-modal" role="dialog" style="margin-top:5em;">
-              <div class="modal-dialog">
-                <div class="modal-content">
-                  <div class="modal-header" style="background:red">
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h4 class="modal-title" style="color:white;">Do you really want delete this?</h4>
-                  </div>
-                  <div class="modal-body modal-body-skill">
-                    <p>Loading</p>
-                  </div>
-                  <div class="modal-footer">
-                    <span id="modal-note" style="color:red;"></span>
-                    <button id="modal-delete-btn" data-request="" type="button" class="btn btn-danger">Delete</button>
-                  </div>
-                </div>
+              <div class="row row-cen">
+              
+              <!--Add skill form (submitted using ajax request)-->
+              <div class="col-lg-6 col-cen">
+                <legend>Add Certificate</legend>
+                
+                <fieldset style="color:blue">Note: The contents are case sensitive</fieldset><br>
+                <fieldset>
+                  <label style="font-size:130%;">Certificate name:</label><br>
+                  <input id="add-cert-val" class="form-control" name="certificate" placeholder="Enter the Certificate name" required>
+                </fieldset><br>
+                
+            
+                <button class="btn btn-warning" id="add-cert-btn">Submit</button>
+                <br>
+                <p id="add-cert-note"></p>
               </div>
             </div>
-            <!--/Modal for deleting skill-->
+              
+            </div>
+            
+            
+            <!--ADD CLIENT-->
+            <div id="aCli" class="tab-pane fade" style="margin-top:1em">
+            
+              <div class="row row-cen">
+              
+              <!--Add skill form (submitted using ajax request)-->
+              <div class="col-lg-6 col-cen">
+                <legend>Add Client</legend>
+                
+                <fieldset style="color:blue">Note: The contents are case sensitive</fieldset><br>
+                <form method="post" action="/admin/addClient">
+                <fieldset>
+                  <label style="font-size:130%;">Client name:</label><br>
+                  <input id="add-client-val" class="form-control"name="client" placeholder="Enter the Client name" required>
+                </fieldset><br>
+                
+            
+                <button id="add-client-btn" class="btn btn-warning">Submit</button>
+                  </form>
+                <br>
+                <p id="add-client-note"></p>
+              </div>
+            </div>
+              
+            </div>
+            
+              </div>
+            </div>
+            </div>
           </div>  
-          <!--/DELETE SKILL TAB-->
+          <!--/ADD TAB-->
+          
+          
+          <!--DELETE TAB-->
+          
+          <div id="delete" class="tab-pane fade">
+            
+            <div class="row">
+            <div class="col-lg-3" style="background:#2b5b6e;height:100vh">
+                <ul class="nav nav-pills nav-stacked">
+                  <li class="active"><a data-toggle="tab" href="#dS" class="white">Delete Skill</a></li>
+                  <li><a data-toggle="tab" href="#dCert" class="white">Delete Certificate</a></li>
+                  <li><a data-toggle="tab" href="#dCli" class="white">Delete Client</a></li>
+                </ul>
+              </div> 
+              
+              <div class="col-lg-9">
+                
+                <div class="tab-content">
+                  
+                  <!--DELETE SKILL-->
+                  <div id="dS" class="tab-pane fade in active" style="margin-top:1em">
+                    
+                    <!--Table for the list of skills-->
+                    <table class="table table-striped">
+                      <thead>
+                        <tr>  
+                          <th style="font-size:115%">Role</th>
+                          <th style="font-size:115%">Skill</th>
+                          <th style="font-size:115%">Type</th>
+                          <th style="font-size:115%"></th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <% for(i=0;i<skills.length;i++) { %>
+                        <% for(j=0;j<skills[i].name.length;j++) { %>
+                        <% for(k=0;k<skills[i].name[j].skillType.length;k++) { %>
+                        <tr>
+                          <td><%=skills[i].role%></td>
+                          <td><%=skills[i].name[j].skillName%></td>
+                          <td><%=skills[i].name[j].skillType[k]%></td>
+                          <td><a class="btn btn-danger delete-skill" data-id="<%=skills[i]._id%>" data-role="<%=skills[i].role%>" data-name="<%=skills[i].name[j].skillName%>" data-type="<%=skills[i].name[j].skillType[k]%>">Delete</a></td>
+                        </tr>
+                        <% } %>  
+                        <% } %>
+                        <% } %>
+                      </tbody>
+                    </table>
+                    
+                    <!--Batch panel-->
+                    <div class="container-fluid col-lg-6">
+                      <div class="panel panel-primary">
+                        <div class="panel-body">
+                          <span style="font-size:110%">Instead delete skills in a batch</span>&emsp;
+                          <button data-toggle="modal" data-target="#modal-select-skills" data-backdrop="static" class="btn btn-primary">Select</button>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <!--Modal for selecting skill-->
+                    <div class="modal fade" id="modal-select-skills" role="dialog" style="margin-top:2em;">
+                      <div class="modal-dialog">
+                        <div class="modal-content">
+                          <div class="modal-header" style="background:red">
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                            <h4 class="modal-title" style="color:white;">Select Skills to delete</h4>
+                          </div>
+                          <form action="/admin/deleteSkillsBatch" method="post">
+                          <div class="modal-body">
+                            
+                            <table class="table table-striped">
+                              <thead>
+                                <tr>  
+                                  <th style="font-size:115%"></th>
+                                  <th style="font-size:115%">Role</th>
+                                  <th style="font-size:115%">Skill</th>
+                                  <th style="font-size:115%">Type</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                <% for(i=0;i<skills.length;i++) { %>
+                                <% for(j=0;j<skills[i].name.length;j++) { %>
+                                <% for(k=0;k<skills[i].name[j].skillType.length;k++) { %>
+                                <tr>
+                                  <td><input type="checkbox" name="skills" value="<%=skills[i]._id%>,<%=skills[i].name[j].skillName%>,<%=skills[i].name[j].skillType[k]%>"></td>
+                                  <td><%=skills[i].role%></td>
+                                  <td><%=skills[i].name[j].skillName%></td>
+                                  <td><%=skills[i].name[j].skillType[k]%></td>
+                                </tr>
+                                <% } %>  
+                                <% } %>
+                                <% } %>
+                              </tbody>
+                            </table>
+                            
+                            
+                          </div>
+                          <div class="modal-footer">
+                            <span id="modal-select-skill-note" style="color:red;"></span>
+                            <button id="modal-select-skill-btn" type="submit" value="submit" class="btn btn-danger">Confirm Delete</button>
+                          </div>
+                          </form>
+                        </div>
+                      </div>
+                    </div>
+                    <script>
+                    $(document).ready(function(){
+                      $("#modal-select-skill-btn").click(function(){
+                        $("#modal-select-skill-note").html("Deleting &emsp;");
+                      });
+                    });
+                    </script>
+                    
+                    <!--/Modal for selecting skill-->
+
+                    <!--Modal for deleting skill-->
+                    <div class="modal fade" id="delete-skill-modal" role="dialog" style="margin-top:5em;">
+                      <div class="modal-dialog">
+                        <div class="modal-content">
+                          <div class="modal-header" style="background:red">
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                            <h4 class="modal-title" style="color:white;">Do you really want delete this?</h4>
+                          </div>
+                          <div class="modal-body modal-body-skill">
+                            <p>Loading</p>
+                          </div>
+                          <div class="modal-footer">
+                            <span id="modal-note" style="color:red;"></span>
+                            <button id="modal-delete-btn" data-request="" type="button" class="btn btn-danger">Delete</button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <!--/Modal for deleting skill-->
+                  </div>
+                  
+                  
+                  <!--DELETE CRETIFICATE-->
+                  <div class="tab-pane fade" id="dCert" style="margin-top:1em">
+                    
+                    <!--Table for the list of certificates-->
+                    <table class="table table-striped">
+                      <thead>
+                        <tr>  
+                          <th style="font-size:115%;text-align:center">Certificate Name</th>
+                          <th></th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <% if(certificates) { for(i=0;i<certificates.data.length;i++) { %>
+                        <tr>
+                          <td style="text-align:center"><%=certificates.data[i]%></td>
+                          <td><a class="btn btn-danger delete-cert" data-certificate="<%=certificates.data[i]%>">Delete</a></td>
+                        </tr>
+                        <% }  }%>
+                      </tbody>
+                    </table>
+                    
+                    <!--Batch panel-->
+                    <div class="container-fluid col-lg-7">
+                      <div class="panel panel-primary">
+                        <div class="panel-body">
+                          <span style="font-size:110%">Instead delete certificates in a batch</span>&emsp;
+                          <button data-toggle="modal" data-target="#modal-select-certificates" data-backdrop="static" class="btn btn-primary">Select</button>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <!--Modal for selecting certificates-->
+                    <div class="modal fade" id="modal-select-certificates" role="dialog" style="margin-top:2em;">
+                      <div class="modal-dialog">
+                        <div class="modal-content">
+                          <div class="modal-header" style="background:red">
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                            <h4 class="modal-title" style="color:white;">Select Certificates to delete</h4>
+                          </div>
+                          <form action="/admin/deleteCertificatesBatch" method="post">
+                          <div class="modal-body">
+                            
+                            <table class="table table-striped">
+                              <thead>
+                                <tr> 
+                                  <th></th>
+                                  <th style="font-size:115%;">Certificate Name</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                <% if(certificates) { for(i=0;i<certificates.data.length;i++) { %>
+                                <tr>
+                                  <td><input type="checkbox" name="certificates" value="<%=certificates.data[i]%>"></td>
+                                  <td><%=certificates.data[i]%></td>
+                                </tr>
+                                <% } } %>
+                              </tbody>
+                            </table>
+                            
+                            
+                          </div>
+                          <div class="modal-footer">
+                            <span id="modal-select-cert-note" style="color:red;"></span>
+                            <button id="modal-select-cert-btn" type="submit" value="submit" class="btn btn-danger">Confirm Delete</button>
+                          </div>
+                          </form>
+                        </div>
+                      </div>
+                    </div>
+                    <script>
+                    $(document).ready(function(){
+                      $("#modal-select-cert-btn").click(function(){
+                        $("#modal-select-cert-note").html("Deleting &emsp;");
+                      });
+                    });
+                    </script>
+                    <!--/Modal for selecting certificates-->
+                    
+                    <!--Modal for deleting certificates-->
+                    <div class="modal fade" id="delete-cert-modal" role="dialog" style="margin-top:5em;">
+                      <div class="modal-dialog">
+                        <div class="modal-content">
+                          <div class="modal-header" style="background:red">
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                            <h4 class="modal-title" style="color:white;">Do you really want delete this?</h4>
+                          </div>
+                          <div class="modal-body modal-body-cert">
+                            <p>Loading</p>
+                          </div>
+                          <div class="modal-footer">
+                            <span id="modal-cert-note" style="color:red;"></span>
+                            <button id="modal-delete-cert-btn" data-request="" type="button" class="btn btn-danger">Delete</button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <!--/Modal for deleting certificates-->
+                    
+                  </div>
+                  
+                  <!--DELETE CLIENT-->
+                  <div class="tab-pane fade" id="dCli" style="margin-top:1em">
+                  
+                    <!--Table for the list of clients-->
+                    <table class="table table-striped">
+                      <thead>
+                        <tr>  
+                          <th style="font-size:115%;text-align:center">Client Name</th>
+                          <th></th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <% if(clients) { for(i=0;i<clients.data.length;i++) { %>
+                        <tr>
+                          <td style="text-align:center"><%=clients.data[i]%></td>
+                          <td><a class="btn btn-danger delete-cli" data-client="<%=clients.data[i]%>">Delete</a></td>
+                        </tr>
+                        <% } } %>
+                      </tbody>
+                    </table>
+                    
+                    <!--Batch panel-->
+                    <div class="container-fluid col-lg-7">
+                      <div class="panel panel-primary">
+                        <div class="panel-body">
+                          <span style="font-size:110%">Instead delete clients in a batch</span>&emsp;
+                          <button data-toggle="modal" data-target="#modal-select-clients" data-backdrop="static" class="btn btn-primary">Select</button>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <!--Modal for selecting clients-->
+                    <div class="modal fade" id="modal-select-clients" role="dialog" style="margin-top:2em;">
+                      <div class="modal-dialog">
+                        <div class="modal-content">
+                          <div class="modal-header" style="background:red">
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                            <h4 class="modal-title" style="color:white;">Select Clients to delete</h4>
+                          </div>
+                          <form action="/admin/deleteClientsBatch" method="post">
+                          <div class="modal-body">
+                            
+                            <table class="table table-striped">
+                              <thead>
+                                <tr> 
+                                  <th></th>
+                                  <th style="font-size:115%;">Client Name</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                <% if(clients) { for(i=0;i<clients.data.length;i++) { %>
+                                <tr>
+                                  <td><input type="checkbox" name="clients" value="<%=clients.data[i]%>"></td>
+                                  <td><%=clients.data[i]%></td>
+                                </tr>
+                                <% } } %>
+                              </tbody>
+                            </table>
+                            
+                            
+                          </div>
+                          <div class="modal-footer">
+                            <span id="modal-select-cli-note" style="color:red;"></span>
+                            <button id="modal-select-cli-btn" type="submit" value="submit" class="btn btn-danger">Confirm Delete</button>
+                          </div>
+                          </form>
+                        </div>
+                      </div>
+                    </div>
+                    <script>
+                    $(document).ready(function(){
+                      $("#modal-select-cli-btn").click(function(){
+                        $("#modal-select-cli-note").html("Deleting &emsp;");
+                      });
+                    });
+                    </script>
+                    <!--/Modal for selecting clients-->
+                    
+                    <!--Modal for deleting clients-->
+                    <div class="modal fade" id="delete-cli-modal" role="dialog" style="margin-top:5em;">
+                      <div class="modal-dialog">
+                        <div class="modal-content">
+                          <div class="modal-header" style="background:red">
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                            <h4 class="modal-title" style="color:white;">Do you really want delete this?</h4>
+                          </div>
+                          <div class="modal-body modal-body-cli">
+                            <p>Loading</p>
+                          </div>
+                          <div class="modal-footer">
+                            <span id="modal-cli-note" style="color:red;"></span>
+                            <button id="modal-delete-cli-btn" data-request="" type="button" class="btn btn-danger">Delete</button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <!--/Modal for deleting clients-->
+                  
+                  </div>
+                
+                </div>
+              
+              </div>
+              
+            </div>
+            
+            
+          </div>  
+          <!--/DELETE TAB-->
           
           <!--ASSICIATE EMPLOYEE TAB-->
-          <div id="associate" class="tab-pane fade">
+          <div id="associate" class="tab-pane fade" style="margin-top:1em">
             
             <!--Table for the list of employees and their manager-->
             <table class="table table-striped">
@@ -170,13 +535,59 @@
               </tbody>
             </table>
             
+            <div class="container-fluid">
+              <div class="panel panel-primary">
+                <div class="panel-body">
+                  <span style="font-size:110%">Instead upload a .csv file to change association/add new users in a batch</span>&emsp;
+                  <button data-toggle="modal" data-target="#modal-csv" data-backdrop="static" class="btn btn-primary">Upload file</button>
+                </div>
+              </div>
+            </div>
+            
+            <!--Modal to upload file-->
+            
+            <div class="modal fade" id="modal-csv" role="dialog" style="margin-top:5em;">
+              <div class="modal-dialog">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Upload file</h4>
+                  </div>
+                  <form action="/admin/changeAssociationFile" method="post" enctype="multipart/form-data">
+                  <div class="modal-body">
+                    
+                    <p style="color:red">Note: The file should not contain any headers</p>
+                    <input class="btn btn-default" type="file" accept=".csv" id="file" name="associationFile" placeholder="Choose the file location..">
+                    <br>
+                    <a href="/admin/exampleCSV">Download</a> this file for an example of the format of data to be uploaded
+                    
+                  </div>
+                  <div class="modal-footer">
+                    <span id="upload-file-note" style="color:blue"></span>&emsp;
+                    <button type="submit" value="submit" id="fileUpload" class="btn btn-primary" accept=".csv">Upload</button>
+                  </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+            <script>
+            $(document).click(function(){
+              $("#fileUpload").click(function(){
+                $("#upload-file-note").html("Please wait. This might take few seconds/minutes depending on the file size")
+              });
+            });
+            </script>
+            
+            <!--Modal to upload file-->
+            
             <div id="manager-list-dd" style="display:none"><% for(i=0;i<mUser.length;i++) { %><option value="<%=mIdRaw[i]%>"><%=mUser[i].name%></option><% } %></div>
+            
             
           </div>  
           <!--/ASSOCIATE EMPLOYEE TAB-->
           
           <!--DISASSOCIATE EMPLOYEE TAB-->
-          <div id="disassociate" class="tab-pane fade">
+          <div id="disassociate" class="tab-pane fade" style="margin-top:1em">
             
             <!--Table for the list of employees with their managers-->
             <table class="table table-striped">
@@ -231,12 +642,12 @@
           <div id="users" class="tab-pane fade">
           
             <div class="row">
-              <div class="col-lg-3">
+              <div class="col-lg-3" style="background:#2b5b6e;height:100vh;">
                 <ul class="nav nav-pills nav-stacked">
-                  <li class="active"><a data-toggle="tab" href="#E">Add Employee</a></li>
-                  <li><a data-toggle="tab" href="#M">Add Manager</a></li>
-                  <li><a data-toggle="tab" href="#rE">Remove Employee</a></li>
-                  <li><a data-toggle="tab" href="#rM">Remove Manager</a></li>
+                  <li class="active"><a data-toggle="tab" href="#E" class="white">Add Employee</a></li>
+                  <li><a data-toggle="tab" href="#M" class="white">Add Manager</a></li>
+                  <li><a data-toggle="tab" href="#rE" class="white">Remove Employee</a></li>
+                  <li><a data-toggle="tab" href="#rM" class="white">Remove Manager</a></li>
                 </ul>
               </div>  
             
@@ -245,7 +656,7 @@
                 <div class="tab-content">
                 
                   <!--ADD EMPLOYEE-->
-                  <div id="E" class="tab-pane fade in active">
+                  <div id="E" class="tab-pane fade in active" style="margin-top:1em">
                     <div class="row row-cen">
                       <div class="col-lg-6 col-cen">
                         <legend style="font-size:150%;">Add Employee</legend>
@@ -257,11 +668,6 @@
                         <fieldset>
                           <label style="font-size:120%;">email:</label><br>
                           <input class="form-control" id="eemail" type="text" placeholder="Enter the email" required>
-                        </fieldset><br>
-                  
-                        <fieldset>
-                          <label style="font-size:120%;">Password:</label><br>
-                          <input class="form-control" id="ePassword" type="password"  placeholder="Enter the password" required>
                         </fieldset><br>
                   
                         <fieldset>
@@ -283,7 +689,7 @@
                 
                 
                   <!--/ADD MANAGER-->
-                  <div id="M" class="tab-pane fade">
+                  <div id="M" class="tab-pane fade" style="margin-top:1em">
                     <div class="row row-cen">
                       <div class="col-lg-6 col-cen">
                         <legend style="font-size:150%">Add Manager</legend>
@@ -297,11 +703,6 @@
                           <input class="form-control" id="memail" type="text" placeholder="Enter the email" required>
                         </fieldset><br>
                   
-                        <fieldset>
-                          <label style="font-size:120%">Password:</label><br>
-                          <input class="form-control" id="mPassword" type="password" placeholder="Enter   the password" required>
-                        </fieldset><br>
-                  
                         <button id="addManager" class="btn btn-primary">Add</button>
                   
                       </div>
@@ -311,7 +712,7 @@
                   <!--ADD MANAGER-->
                 
                   <!--REMOVE EMPLOYEE-->
-                  <div id="rE" class="tab-pane fade">
+                  <div id="rE" class="tab-pane fade" style="margin-top:1em">
                     
                     <!--Table for the list of employees-->
                     <table class="table table-striped">
@@ -356,7 +757,7 @@
                 
                 
                   <!--REMOVE MANAGER-->
-                  <div id="rM" class="tab-pane fade">
+                  <div id="rM" class="tab-pane fade" style="margin-top:1em">
                   
                     <!--Table for the list of managers-->
                     <table class="table table-striped">

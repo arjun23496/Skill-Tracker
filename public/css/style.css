@@ -1,16 +1,17 @@
 body{
-    background: white;
+    background: #e6f2ff;
     font-family: sans-serif;
     font-family: 'Open Sans', sans-serif;
 }
 
 
 a:hover{
+  color: #00ccff;
   cursor: pointer;
 }
 
 .navbar{
-    background-color:#e6e6e6;
+    background-color:#162f39;
     border-radius:0;
 }
 
@@ -67,10 +68,13 @@ legend{
 }
 
 #logout{
-    -webkit-transition-timing-function: ease-in-out;
-    transition-timing-function: ease-in-out;
-    transition: background 0.6s;
   font-weight: bold;
+  border: 1px solid #00ccff;
+  padding: 0.7em;
+  margin-top: 0.3em;
+  -webkit-transition-timing-function: ease-in-out;
+  transition-timing-function: ease-in-out;
+  transition: background 0.6s;
 }
 
 #logout:hover{
@@ -87,10 +91,11 @@ legend{
   background-color: #00ccff; 
   color: #FFFFFF; 
   text-align:center;
+  font-size: 120%;
 }
 
 .popover-content {
-  background-color: #e6e6e6;
+  background-color: white;
   color: #FFFFFF;
   max-height:30em; 
   overflow:scroll;
@@ -105,3 +110,24 @@ legend{
 .g-user:hover{
   cursor: none;
 }
+
+button , a {
+  border-radius: 0 !important;
+}
+
+.white{
+  color:white;
+}
+
+btn-danger{
+  background-color: #ff3333 !important;
+}
+
+thead{
+  background: #00b3b3;
+}
+
+nav a : hover {
+  color: white !important;
+}
+

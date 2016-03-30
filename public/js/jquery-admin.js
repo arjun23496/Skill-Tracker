@@ -7,6 +7,7 @@ $(document).ready(function(){
     var name = $("#name").val();
     var type = $("#type").val();
     if(role && name && type){
+      $("#add-note").html("Adding the skill");
       $.post('/admin/addSkill',
              {role:role,name:name,type:type},
              function(data){
@@ -22,6 +23,42 @@ $(document).ready(function(){
     
   });
   
+  /*Submit certificate*/
+  $("#add-cert-btn").click(function(){
+    var cert = $("#add-cert-val").val();
+    
+    if(cert){
+      $("#add-cert-note").html("Adding Certificate");
+      $.post('/admin/addCertificate',{certificate:cert},function(data){
+        if(data){
+          location.reload();
+        } else {
+          $("#add-cert-note").html("Error while adding the Certificate. <br>This might also happen if the Certificate already exists");
+        }
+      });
+    } else {
+      $("#add-cert-note").html("The input field cant be empty");
+    }
+  });
+  
+  /*Submit Client*/
+  $("#add-cli-btn").click(function(){
+    var cli = $("#add-cli-val").val();
+    
+    if(cli){
+      $("#add-cli-note").html("Adding Client");
+      $.post('/admin/addClient',{client:cli},function(data){
+        if(data){
+          location.reload();
+        } else {
+          $("#add-cli-note").html("Error while adding the Client. <br>This might also happen if the Client already exists");
+        }
+      });
+    } else {
+      $("#add-cli-note").html("The input field cant be empty");
+    }
+  });
+  
   
   /*To delete a skill*/
   $(".delete-skill").unbind().click(function(){
@@ -30,9 +67,9 @@ $(document).ready(function(){
     var name = $(this).attr('data-name');
     var type = $(this).attr('data-type');
                   
-    $("#modal-delete-btn").attr('data-request','/'+id+'/'+name+'/'+type);
-                  
-    $(".modal-body-skill").html('<table class="table table-striped"><thead><tr><th>Role</th><th>Skill</th><th>Type</th><th></th></tr></thead><tbody><tr><td>'+role+'</td><td>'+name+'</td><td>'+type+'</td></tr></tbody></table>')
+    $("#modal-delete-btn").attr('data-request','/'+escape(id)+'/'+escape(name)+'/'+escape(type));
+    $("#modal-note").html("");              
+    $(".modal-body-skill").html('<table class="table table-striped"><thead><tr><th>Role</th><th>Skill</th><th>Type</th></tr></thead><tbody><tr><td>'+role+'</td><td>'+name+'</td><td>'+type+'</td></tr></tbody></table>');
     $("#delete-skill-modal").modal();
   });
               
@@ -48,6 +85,49 @@ $(document).ready(function(){
     });
   });
   
+  
+  
+  /*To delete a certificate*/
+  $(".delete-cert").unbind().click(function(){
+    var cert = $(this).attr('data-certificate');
+                  
+    $("#modal-delete-cert-btn").attr('data-request',cert);
+    $("#modal-cert-note").html("");              
+    $(".modal-body-cert").html('<table class="table table-striped"><thead><tr><th style="text-align:center;font-size:115%">Certificate Name</th></tr></thead><tbody><tr><td style="text-align:center">'+cert+'</td></tr></tbody></table>');
+    $("#delete-cert-modal").modal();
+  });
+              
+  $("#modal-delete-cert-btn").click(function(){
+    $("#modal-cert-note").html("Deleting");
+    $.post('/admin/deleteCertificate',{cert:$(this).attr('data-request')},function(data){
+      if(data){
+        location.reload();
+      } else {
+        $("#modal-cert-note").html("Error while deleting.Please try again");
+      }
+    });
+  });
+
+   /*To delete a client*/
+  $(".delete-cli").unbind().click(function(){
+    var cli = $(this).attr('data-client');
+                  
+    $("#modal-delete-cli-btn").attr('data-request',cli);
+    $("#modal-cli-note").html("");              
+    $(".modal-body-cli").html('<table class="table table-striped"><thead><tr><th style="text-align:center;font-size:115%">Client Name</th></tr></thead><tbody><tr><td style="text-align:center">'+cli+'</td></tr></tbody></table>');
+    $("#delete-cli-modal").modal();
+  });
+              
+  $("#modal-delete-cli-btn").click(function(){
+    $("#modal-cli-note").html("Deleting");
+    $.post('/admin/deleteClient',{cli:$(this).attr('data-request')},function(data){
+      if(data){
+        location.reload();
+      } else {
+        $("#modal-cli-note").html("Error while deleting.Please try again");
+      }
+    });
+  });
   
   
   /*To change association of an employee*/
@@ -108,16 +188,15 @@ $(document).ready(function(){
     } else {
       var name = $("#eName").val();
       var email = $("#eemail").val();
-      var password = $("#ePassword").val();
                           
-      if(name && email && password){
+      if(name && email){
         $.post('/admin/addEmployee',
-               {name:name,email:email,password:password,manager:manager} ,
+               {name:name,email:email,manager:manager} ,
                function(data){
           if(data){
             location.reload();
           } else {
-            alert("There was some error while creating the new user. Please refresh the page  and try again");
+            alert("There was some error while creating the new user. This might also happen if the email already exists");
           }
         });
       }
@@ -129,15 +208,14 @@ $(document).ready(function(){
                       
     var name = $("#mName").val();
     var email = $("#memail").val();
-    var password = $("#mPassword").val();
-    if(name && email && password){
+    if(name && email){
       $.post('/admin/addManager',
-             {name:name,email:email,password:password} ,
+             {name:name,email:email} ,
              function(data){
         if(data){
           location.reload();
         } else {
-          alert("There was some error while creating the new user. Please refresh the page  and try again");
+          alert("There was some error while creating the new user. This might also happen if the email already exists");
         }
       });
     }

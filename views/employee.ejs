@@ -9,15 +9,13 @@
     <script src="/js/jquery-1.11.2.min.js" type="text/javascript"></script>
 	<script src="/js/bootstrap.js" type="text/javascript"></script>
 	<script src="/js/jquery-home.js" type="text/javascript"></script>
-    <script>
-    var logoutPrefix = "";
-    </script>
+    <!--For timer--><script> var logoutPrefix = ""; </script>
 	<script src="/js/timer.js" type="text/javascript"></script>
   </head>
   
   <body>
     
-    <nav class="navbar navbar-default" style="margin-bottom:-1em">
+    <nav class="navbar navbar-default" style="margin-bottom:-2.8em">
       <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#Navbar"><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></button>
       <div class="collapse navbar-collapse" id="Navbar">
         <ul class="nav navbar-nav navbar-left">
@@ -87,13 +85,13 @@
     <br><br>
     
     <div class="row">
-    <div class="col-lg-2">
+    <div class="col-lg-2"  style="background:#162f39;height:100vh">
       <!--List of choices on left side of the webpage-->
       <ul class="nav nav-pills nav-stacked">
         <li class="active"><a data-toggle="tab" href="#home">Home</a></li>
-        <li><a data-toggle="tab" href="#view">View Skills</a></li>
+        <li><a data-toggle="tab" href="#view">View</a></li>
         <li><a data-toggle="tab" href="#edit">Edit Skills</a></li>
-        <li><a data-toggle="tab" href="#add">Add Skills</a></li>
+        <li><a data-toggle="tab" href="#add">Add</a></li>
       </ul>  
     </div>
       
@@ -108,24 +106,49 @@
         </div>
         
         <!--View Skills-->
-        <div id="view" class="tab-pane fade">
-          <div class="container-fluid">
+        <div id="view" class="tab-pane fade" style="margin-top:1em">
+          
+          
+        <div class="container-fluid">
           <div class="panel panel-default">
-            <div class="panel-heading">View Skills</div>
+            <div class="panel-heading">Skills</div>
             <div class="panel-body" id="read<%=user._id%>">
             
-              
-              
-              
             </div>
           </div>
         </div>
+          
+          <!--View certificates-->
+          <div class="container-fluid">
+          <div class="panel panel-default">
+            <div class="panel-heading">Certifications</div>
+            <div class="panel-body">
+            <% for(i=0;i<user.certificates.length;i++) { %>
+              <span style="border:1px solid #00ccee;padding:0.4em 1em;border-radius:0.3em"><%=user.certificates[i]%></span>&emsp;
+            <% } %>
+            </div>
+          </div>
+        </div>
+          
+          <!--View clients-->
+          <div class="container-fluid">
+          <div class="panel panel-default">
+            <div class="panel-heading">Clients</div>
+            <div class="panel-body">
+            <% for(i=0;i<user.clients.length;i++) { %>
+              <span style="border:1px solid #00ccee;padding:0.4em 1em;border-radius:0.3em"><%=user.clients[i]%></span>&emsp;
+            <% } %>
+            </div>
+          </div>
+        </div>
+          
+          
         </div>
         
         <!--Edit Skills-->
-        <div id="edit" class="tab-pane fade">
+        <div id="edit" class="tab-pane fade" style="margin-top:1em">
           <div class="container-fluid">
-          <div class="panel panel-info">
+          <div class="panel panel-default">
             <div class="panel-heading">Edit Skills</div>
             <div class="panel-body" id="<%=user._id%>">
             
@@ -137,18 +160,41 @@
         <script>
         $(document).ready(function(){
           getEmpData("<%=user._id%>");
-          getEmpData_read("<%=user._id%>");
         });
         </script>
         
         <!--Add Skill-->
-        <div id="add" class="tab-pane fade">
-          
+        <div id="add" class="tab-pane fade"  style="margin-top:1em">
           
           
           <div class="container-fluid">
           <div class="panel panel-success">
-            <div class="panel-heading">Add Skill</div>
+            <div class="panel-body">
+              <button id="add-skill-trigger" class="btn btn-primary">Add Skill</button>
+              
+              <button data-toggle="modal" data-target="#certificate-modal" data-backdrop="static" class="btn btn-primary">Update Certification</button>
+              
+              <button data-toggle="modal" data-target="#clients-modal" data-backdrop="static" class="btn btn-primary">Update Clients</button>
+              
+            </div>
+            </div>
+          </div>
+          
+          <script>
+          $(document).ready(function(){
+            $("#add-skill-trigger").click(function(){
+              $("#add-skill-field").slideDown();
+            });
+            $("#add-skill-dismiss").click(function(){
+              $("#add-skill-field").slideUp();
+            });
+          });
+          </script>
+          
+          <!--Add Skill-->
+          <div class="container-fluid" style="display:none" id="add-skill-field">
+          <div class="panel panel-success">
+            <div class="panel-heading">Add Skill<button id="add-skill-dismiss" type="button" class="close" style="margin-top:-0.2em">&times;</button></div>
             <div class="panel-body">
               <span id="add-skill">
                 
@@ -157,10 +203,86 @@
               <span id="skillDD"></span>&nbsp;
               <span id="typeDD"></span>&nbsp;
               <span id="levelDD"></span>&nbsp;
+              <span id="expDD"></span>&nbsp;
               <span id="submit-btn"></span>
             </div>
             </div>
           </div>
+          <!--Add Skill-->
+          
+          
+          
+          <!--Modal for certification-->
+            <div class="modal fade" id="certificate-modal" role="dialog" style="margin-top:5em;">
+              <div class="modal-dialog">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Certificates</h4>
+                  </div>
+                  <div class="modal-body" style="padding:2em">
+                    
+                    <form action="/user/certificateUpdate" method="post">
+                      <% if(certificates){ for(i=0;i<certificates.data.length;i++){ %>
+                      <input type="checkbox" name="certificate" value="<%=certificates.data[i]%>" <% if(user.certificates.indexOf(certificates.data[i]) != -1) { %>checked<% } %>>&nbsp;<%=certificates.data[i]%>&emsp;&emsp;
+                      <% if((i+1)%6 == 0) { %><br><br><% } %>
+                      <%}}%>
+                      <div class="modal-footer">
+                        <span id="modal-cert-note" style="color:green"></span>
+                        <button id="modal-cert-btn" class="btn btn-info" type="submit" value="submit">Submit</button> &emsp;
+                        <button class="btn btn-warning" data-dismiss="modal">Cancel</button>
+                      </div>
+                    </form>
+
+                  </div>
+                </div>
+              </div>
+          </div>
+          <script>
+          $(document).ready(function(){
+            $("#modal-cert-btn").click(function(){
+              $("#modal-cert-note").html("Submitting...&emsp;")
+            });
+          });
+          </script>
+          <!--/Modal for certification-->
+          
+          <!--Modal for clients-->
+            <div class="modal fade" id="clients-modal" role="dialog" style="margin-top:5em;">
+              <div class="modal-dialog">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Clients</h4>
+                  </div>
+                  <div class="modal-body" style="padding:2em">
+                    
+                    <form action="/user/clientUpdate" method="post">
+                      <% if(clients){ for(i=0;i<clients.data.length;i++){ %>
+                      <input type="checkbox" name="clients" value="<%=clients.data[i]%>" <% if(user.clients.indexOf(clients.data[i]) != -1) { %>checked<% } %>>&nbsp;<%=clients.data[i]%>&emsp;&emsp;
+                      <% if((i+1)%6 == 0) { %><br><br><% } %>
+                      <%}}%>
+                      <div class="modal-footer">
+                        <span id="modal-cli-note" style="color:green"></span>
+                        <button id="modal-cli-btn" class="btn btn-info" type="submit" value="submit">Submit</button>&emsp;
+                        <button class="btn btn-warning" data-dismiss="modal">Cancel</button>
+                      </div>
+                    </form>
+
+                  </div>
+                </div>
+              </div>
+            </div>
+          <script>
+          $(document).ready(function(){
+            $("#modal-cli-btn").click(function(){
+              $("#modal-cli-note").html("Submitting...&emsp;")
+            });
+          });
+          </script>
+          <!--/Modal for clients-->
+          
+          
           
           
           <div class="container-fluid">
@@ -177,7 +299,9 @@
         </div>
             
             
-<div class="hide" id="skill-roles"><% for(i=0;i<skills.length;i++) { %><option value="<%=skills[i].role%>"><%=skills[i].role%></option><% } %></div>            
+<div class="hide" id="skill-roles"><% for(i=0;i<skills.length;i++) { %><option value="<%=skills[i].role%>"><%=skills[i].role%></option><% } %></div> 
+        
+<div class="hide" id="experience-options"><% for(i=0;i<=15;i++) { %><option value="<%=i%>"><%=i%></option><% } %></div>        
 <!--Script for Add Skill-->            
 <script type="text/javascript">
   
@@ -233,9 +357,22 @@
   function forLevels(){
     $("#type").change(function(){
       $("#levelDD").html("");
+      $("#expDD").html("");
       $("#submit-btn").html("");
       if($(this).val()!="select"){
         $("#levelDD").append('<select id="level" name="level" class="btn btn-default"><option value="select">Select level</option><option value="Beginner">Beginner</option><option value="Intermediate">Intermediate</option><option value="Expert">Expert</option></select>');
+      }
+            
+      forExperience();
+    });
+  }
+  
+  function forExperience(){
+    $("#level").change(function(){
+      $("#expDD").html("");
+      $("#submit-btn").html("");
+      if($(this).val()!="select"){
+        $("#expDD").append('<select id="exp" name="exp" class="btn btn-default"><option value="select">Select Experience(yrs)</option>'+$("#experience-options").html()+'<option value="15+">15+</option></select>');
       }
             
       forSubmit();
@@ -243,7 +380,7 @@
   }
   
   function forSubmit(){
-    $("#level").change(function(){
+    $("#exp").change(function(){
       $("#submit-btn").html("");
         if($(this).val()!="select"){
           $("#submit-btn").append('<button id="submit-skill" type="submit" value="submit" form="skillSubmit" class="btn btn-primary">Submit</button>&nbsp;');
@@ -260,15 +397,17 @@
       var n = $("#skill").val();
       var t = $("#type").val();
       var l = $("#level").val();
+      var e = $("#exp").val();
       
       $(".submitting").html("");
       $("#submit-btn").append('<span style="color:blue" class="submitting">Submitting</span>');
-      $.post('/user/skillSubmit' , { role:r , skill:n ,type:t , level:l } , function(data){
+      $.post('/user/skillSubmit' , { role:r , skill:n ,type:t , level:l , exp:e } , function(data){
         if(data){
           $("#add-skill").html("");
           $("#skillDD").html("");
           $("#typeDD").html("");
           $("#levelDD").html("");
+          $("#expDD").html("");
           $("#submit-btn").html("");
           addSkillOptions();
           sessionSkills("<%=user._id%>");

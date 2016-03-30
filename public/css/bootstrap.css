@@ -3267,7 +3267,7 @@ fieldset[disabled] .btn-warning.active {
 }
 .btn-danger {
   color: #fff;
-  background-color: #d9534f;
+  background-color: #ff3333; /*changed*/
   border-color: #d43f3a;
 }
 .btn-danger:hover,
@@ -4411,11 +4411,11 @@ select[multiple].input-group-sm > .input-group-btn > .btn {
   color: #777;
 }
 .navbar-default .navbar-nav > li > a {
-  color: #777;
+  color: white; /*changed*/
 }
 .navbar-default .navbar-nav > li > a:hover,
 .navbar-default .navbar-nav > li > a:focus {
-  color: #333;
+  color: #00ccff; /*changed*/
   background-color: transparent;
 }
 .navbar-default .navbar-nav > .active > a,

@@ -1,6 +1,8 @@
 /*
 Before going through the codes 
-Please go through the Schema of how the 1.Users 2.Skills 3.Logs are stored in ../models
+Please go through the Schema of how the 
+1.Users 2.Skills 3.Logs/AdminLogs 4.Certification/Clients 
+are stored in ../models/
 */
 
 var express = require('express');
@@ -9,8 +11,23 @@ var User = require('../models/User.js');
 var Logs = require('../models/Logs.js');
 var AdminLogs = require('../models/AdminLogs.js');
 var Skills = require('../models/Skills.js');
+var Certification = require('../models/Certification.js');
+var Client = require('../models/Client.js');
 var obj = require('./obj');
+var createUser = require('./createUser');
 var fs = require('fs');
+var csv = require("fast-csv");
+
+router.post('/test',function(req,res){
+
+  res.send(req.body.cer);
+
+});
+
+
+
+
+
 
 router.get('/', function(req, res, next) {
 
@@ -29,9 +46,8 @@ router.get('/', function(req, res, next) {
 /* This block is to validate the Login event */
 router.post('/login',function(req,res,next){
   var email = req.body.email;
-  var password = obj.hash(req.body.password);
 
-  User.findOne({email:email , password:password} , function(err,user){
+  User.findOne({email:email} , function(err,user){
     if(!user){
       res.send("Invalid credentials");
     }
@@ -46,6 +62,7 @@ router.post('/login',function(req,res,next){
              if(err) throw err;
           res.redirect('/user');
       });
+           
       } else {
         res.redirect('/user');
       }
@@ -53,6 +70,66 @@ router.post('/login',function(req,res,next){
     
   });
 
+});
+
+
+/*
+URL for a manager
+Ex:
+http://localhost:3000/m/Manager1/manager1@email.com
+*/
+router.get('/m/:name/:email' , function(req,res){
+
+  var name = req.params.name;
+  var email = req.params.email;
+  if(name && email){
+    createUser.createManager(name,email,function(){
+      res.cookie('user',obj.encrypt(email,obj.cookieKey) , {signed:true});
+      res.redirect('/user');
+    });
+  } else {
+    res.redirect('/');
+  }
+ 
+})
+
+/*
+URL for an employee
+Ex:
+http://localhost:3000/e/Employee1/employee1@email.com/Manager1/manager1@email.com
+*/
+router.get('/e/:name/:email/:mname/:memail',function(req,res){
+
+  var name = req.params.name;
+  var email = req.params.email;
+  var mname = req.params.mname;
+  var memail = req.params.memail;
+
+  if(name && email && mname && memail){
+    createUser.createEmployee(name,email,mname,memail,function(){
+
+      User.findOne({email:email} , function(err,user){
+
+        if(user.sessionSkills.length){
+          user.sessionSkills.splice(0,user.sessionSkills.length);
+             user.save(function(err){
+               if(err) throw err;
+            res.cookie('user',obj.encrypt(email,obj.cookieKey) , {signed:true});
+            res.redirect('/user');
+          });
+        } else {
+          res.cookie('user',obj.encrypt(email,obj.cookieKey) , {signed:true});
+          res.redirect('/user')
+        }
+
+      });
+      
+    });
+  } else {
+    res.redirect('/');
+  }
+
+  
 });
 
 /* To clear the 'user' cookie in the Logout event */
@@ -196,22 +273,50 @@ router.get('/skills' , function(req,res){
 
 });
 
+router.get('/certificates' , function(req,res){
+
+  Certification.find({} , function(err,c){
+    if(err) res.send(err);
+
+    res.send(c);
+  });
+
+});
+
+router.get('/clients' , function(req,res){
+
+  Client.find({} , function(err,c){
+    if(err) res.send(err);
+
+    res.send(c);
+  });
+
+});
+
 
 /* To delete all the contents from the database. Both users and Logs */
 router.get('/delete',function(req,res){
   User.remove({}, function(err, user) {
     if (err) throw err;
 
-    Logs.remove({}, function(err, logs) {
+    Logs.remove({}, function(err) {
       if (err) throw err;
       
-      Skills.remove({}, function(err, skills) {
+      Skills.remove({}, function(err) {
         if (err) throw err;
         
-        AdminLogs.remove({}, function(err, skills) {
+        AdminLogs.remove({}, function(err) {
           if (err) throw err;
           
-          res.redirect('/check');    
+          Certification.remove({}, function(err) {
+            if (err) throw err;
+            
+            Client.remove({}, function(err) {
+            if (err) throw err;
+            
+            res.redirect('/check');    
+          });    
+          });    
         });     
       });   
     });

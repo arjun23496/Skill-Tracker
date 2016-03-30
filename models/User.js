@@ -9,8 +9,6 @@ var userSchema = new Schema({
 
 	email : { type:String , required:true , unique:true },
 
-	password : { type: String , required:true },
-
 	/* 
 	isManager:
 	'1' if the user is a manager 
@@ -36,6 +34,8 @@ var userSchema = new Schema({
 
 		level : String ,
 
+		exp : String,
+
 		createdDate: Date
 
 	}] ,
@@ -50,7 +50,13 @@ var userSchema = new Schema({
 
 		level : String ,
 
+		exp : String
+
 	}] ,
+
+	certificates : [String],
+
+	clients: [String],
 
 	/*
 	Updated:

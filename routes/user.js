@@ -1,6 +1,8 @@
 /*
 Before going through the codes 
-Please go through the Schema of how the 1.Users 2.Skills 3.Logs are stored in ../models
+Please go through the Schema of how the 
+1.Users 2.Skills 3.Logs/AdminLogs 4.Certification/Clients 
+are stored in ../models/
 */
 
 var express = require('express');
@@ -8,6 +10,8 @@ var router = express.Router();
 var User = require('../models/User.js');
 var Logs = require('../models/Logs.js');
 var Skills = require('../models/Skills.js');
+var Certification = require('../models/Certification.js');
+var Client = require('../models/Client.js');
 var obj = require('./obj');
   
 
@@ -45,7 +49,11 @@ router.get('/employee' , function(req,res,next){
       }
       else{
         Skills.find({},function(err,skills){
-          res.render('employee' , {user:user , skills:skills});
+          Certification.findOne({},function(err,c){
+            Client.findOne({},function(err,cl){
+              res.render('employee' , {user:user , skills:skills , certificates:c , clients:cl});
+            });
+          });
         });
       }
     });
@@ -92,6 +100,7 @@ router.post('/skillSubmit',function(req,res,next){
             skillName: req.body.skill,
             skillType: req.body.type,
             level: req.body.level,
+            exp: req.body.exp,
             createdDate: d
           });
 
@@ -100,6 +109,7 @@ router.post('/skillSubmit',function(req,res,next){
             skillName: req.body.skill,
             skillType: req.body.type,
             level: req.body.level,
+            exp: req.body.exp,
           });
 
           user.save(function(err){
@@ -138,6 +148,74 @@ router.post('/skillSubmit',function(req,res,next){
   }
 });
 
+router.post('/certificateUpdate',function(req,res){
+  var userid = obj.siStatus(req,obj,obj.cookieKey);
+
+  if(userid){
+    User.findOne({email:userid},function(err,user){
+      var d = new Date();
+      user.certificates = req.body.certificate;
+      user.save(function(err){
+        if(err) throw err;
+
+        if(user.connectedTo.length){
+            User.findOne({_id:user.connectedTo} , function(error , mUser){
+          
+              /* Updating the notifications of the connected manager */
+              mUser.Updated = 1;
+              mUser.Updates.push({
+                notify: user.name+" updated the Certifications",
+                seen: 0,
+                createdDate: d
+              });
+              mUser.save(function(err){
+                if(err) throw err;
+                res.redirect('/user');
+              });
+            });
+          }
+
+      });
+    });
+  } else {
+    redirect('/');
+  }
+
+});
+
+router.post('/clientUpdate',function(req,res){
+  var userid = obj.siStatus(req,obj,obj.cookieKey);
+
+  if(userid){
+    User.findOne({email:userid},function(err,user){
+      var d = new Date();
+      user.clients = req.body.clients;
+      user.save(function(err){
+        if(err) throw err;
+        if(user.connectedTo.length){
+            User.findOne({_id:user.connectedTo} , function(error , mUser){
+          
+              /* Updating the notifications of the connected manager */
+              mUser.Updated = 1;
+              mUser.Updates.push({
+                notify: user.name+" updated the Clients",
+                seen: 0,
+                createdDate: d
+              });
+              mUser.save(function(err){
+                if(err) throw err;
+                res.redirect('/user');
+              });
+            });
+          }
+      });
+    });
+  } else {
+    redirect('/');
+  }
+
+});
+
 /* 
 To send the skills of a particular employee 
 This event occurs when a manager clicks on a particular employee in his home page
@@ -147,9 +225,32 @@ router.post('/getEmployeeData/:id' , function(req,res,next){
   if(!obj.siStatus(req,obj,obj.cookieKey)){
     res.redirect('/');
   } else {
-    var id = req.params.id;
-    User.findOne({_id:id} , function(err,user){
+    User.findOne({_id:req.params.id} , function(err,user){
       res.send(user.skills);
+    });
+  }
+  
+});
+
+router.post('/getEmployeeCertifications/:id' , function(req,res,next){
+  
+  if(!obj.siStatus(req,obj,obj.cookieKey)){
+    res.redirect('/');
+  } else {
+    User.findOne({_id:req.params.id} , function(err,user){
+      res.send(user.certificates);
+    });
+  }
+  
+});
+
+router.post('/getEmployeeClients/:id' , function(req,res,next){
+  
+  if(!obj.siStatus(req,obj,obj.cookieKey)){
+    res.redirect('/');
+  } else {
+    User.findOne({_id:req.params.id} , function(err,user){
+      res.send(user.clients);
     });
   }
   
@@ -203,10 +304,11 @@ router.post('/updateLevel', function(req,res,next) {
   var level = req.body.level;
 
 /* Checking if the received level is a vaild one */
-  if(level!="Beginner" && level!="Intermediate" && level!="Expert"){
+  if(level!="Beginner" && level!="Intermediate" && level!="Expert" && level!="select"){
     res.send(false);
   } else {
     var skillId = req.body.skillId;
+    var exp = req.body.exp;
     var id = req.body.user;
     User.findOne({ _id:id } , function(err,user){
 	 		
@@ -220,19 +322,36 @@ router.post('/updateLevel', function(req,res,next) {
         
           /* Finding the skill to which the change of level request corresponds to */
           if(allSkills[i]._id == skillId){
-            var oldLevel = allSkills[i].level;
-            allSkills[i].level = level ; // re-assigning the level
+            if(level != "select"){
+              var oldLevel = allSkills[i].level;
+              allSkills[i].level = level ;
+            }
+            if(exp != "select"){ 
+              var oldExp = allSkills[i].exp;
+              allSkills[i].exp = exp ;
+            } 
       
             /* This block is executed when the manager is changing the level of skills */
             if(currUser.isManager){
               
               /* Notifications of the connected employee is updated here*/
-              user.Updated = 1;
-              user.Updates.push({
-                notify: "Manager updated the level of "+allSkills[i].role+"-"+allSkills[i].skillName+"-"+allSkills[i].skillType+" from "+oldLevel+" to "+level,
-                seen: 0,
-                createdDate: d
-              });
+              if(level != "select"){
+                user.Updated = 1;
+                user.Updates.push({
+                  notify: "Manager updated the level of "+allSkills[i].role+"-"+allSkills[i].skillName+"-"+allSkills[i].skillType+" from "+oldLevel+" to "+level,
+                  seen: 0,
+                  createdDate: d
+                });
+              }
+
+              if(exp != "select"){
+                user.Updated = 1;
+                user.Updates.push({
+                  notify: "Manager updated the experience of "+allSkills[i].role+"-"+allSkills[i].skillName+"-"+allSkills[i].skillType+" from "+oldExp+" to "+exp,
+                  seen: 0,
+                  createdDate: d
+                });
+              }
 
               User.findOne({_id:user.connectedTo},function(err,U){
                 /* This event is recorded in the logs here */
@@ -252,12 +371,23 @@ router.post('/updateLevel', function(req,res,next) {
               User.findOne({_id:user.connectedTo},function(err,U){
             
                 /* notifications of the connected manager is updated here */
-                U.Updated = 1;
-                U.Updates.push({
-                  notify: user.name+" updated the level of "+allSkills[i].role+"-"+allSkills[i].skillName+"-"+allSkills[i].skillType+" from "+oldLevel+" to "+level,
-                  seen: 0,
-                  createdDate: d
-                });
+                if(level != "select"){
+                  U.Updated = 1;
+                  U.Updates.push({
+                    notify: user.name+" updated the level of "+allSkills[i].role+"-"+allSkills[i].skillName+"-"+allSkills[i].skillType+" from "+oldLevel+" to "+level,
+                    seen: 0,
+                    createdDate: d
+                  });
+                }
+
+                if(exp != "select"){
+                  U.Updated = 1;
+                  U.Updates.push({
+                    notify: user.name+" updated the experience of "+allSkills[i].role+"-"+allSkills[i].skillName+"-"+allSkills[i].skillType+" from "+oldExp+" to "+exp,
+                    seen: 0,
+                    createdDate: d
+                  });
+                }
 
                 U.save(function(err){
                   if(err) throw err;

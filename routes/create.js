@@ -1,4 +1,8 @@
 /*
+To fill the initial data in the database for testing
+*/
+
+/*
 Before going through the codes 
 Please go through the Schema of how the 1.Users 2.Skills 3.Logs are stored in ../models
 */
@@ -7,12 +11,14 @@ var express = require('express');
 var router = express.Router();
 var User = require('../models/User.js');
 var Skills = require('../models/Skills.js');
+var Certification = require('../models/Certification.js');
+var Client = require('../models/Client.js');
 var obj = require('./obj');
 
 /* This is to feed the data in the database */
 /* Database name = myappdatabase */
 
-router.get('/', function(req, res, next) {
+router.get('/users', function(req, res, next) {
 
 /* All the temporary data which can be changed later */
 	var users = [
@@ -193,7 +199,20 @@ router.get('/skills',function(req,res){
 		});
 	};
 
-	res.redirect('/');
+	res.redirect('/create/certificates');
+
+});
+
+
+router.get('/certificates',function(req,res){
+
+	Certification({data:["Java","SI","Oracle","C","C++","JavaScript","MySQL","MongoDB"]}).save(function(err){if(err) throw err;res.redirect('/create/clients');});
+
+});
+
+router.get('/clients',function(req,res){
+
+	Client({data:["Nike","Adidas","ITC","Titan","Puma","Red Bull"]}).save(function(err){if(err) throw err;res.redirect('/');});
 
 });
 

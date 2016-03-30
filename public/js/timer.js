@@ -1,10 +1,15 @@
-var time = 100000;
+/* Timer for session timeout (inactive session) */
+
+/* "timeOut" is the inactive time(in seconds) after which the user is logged out */
+var timeOut = 3000;
+
+
+var time = timeOut;
 
 function timer(){
   
   setTimeout(function(){
     time--;
-    console.log(time);
     if(time==0){
       $.get(logoutPrefix+'/logout',{sessionTimeout:"true"},function(data){
         if(data){
@@ -29,6 +34,7 @@ $(document).ready(function(){
   timer();
   
   $("html").click(function(){
-    time = 100000;
+    time = timeOut;
   });
+
 });
