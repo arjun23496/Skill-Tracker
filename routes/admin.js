@@ -9,7 +9,6 @@ var express = require('express');
 var router = express.Router();
 var multer = require('multer');
 var fs = require('fs');
-var csv = require('fast-csv');
 var User = require('../models/User.js');
 var Skills = require('../models/Skills.js');
 var AdminLogs = require('../models/AdminLogs.js');

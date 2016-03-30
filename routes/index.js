@@ -16,7 +16,6 @@ var Client = require('../models/Client.js');
 var obj = require('./obj');
 var createUser = require('./createUser');
 var fs = require('fs');
-var csv = require("fast-csv");
 
 router.post('/test',function(req,res){
 
@@ -43,8 +42,40 @@ router.get('/', function(req, res, next) {
 
 });
 
+
+
+router.post('/login',function(req,res){
+
+  var email = req.body.email;
+
+  User.findOne({email:email} , function(err,user){
+      if(!user){
+        res.redirect('/');
+      }
+      else{
+
+        var c = obj.encrypt(user.email , obj.cookieKey);
+        res.cookie('user' , c , {signed:true});
+
+        if(user.sessionSkills.length){
+          user.sessionSkills.splice(0,user.sessionSkills.length);
+             user.save(function(err){
+               if(err) throw err;
+            res.redirect('/user');
+        });
+             
+        } else {
+          res.redirect('/user');
+        }
+      }
+      
+    });
+
+});
+
+
 /* This block is to validate the Login event */
-router.post('/login',function(req,res,next){
+router.post('/LDAPlogin',function(req,res,next){
 
   /*
   email = email entered in the form
