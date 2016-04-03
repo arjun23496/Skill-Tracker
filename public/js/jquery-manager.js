@@ -16,6 +16,7 @@ $(document).ready(function(){
  
   function getEmpData(emp){
   $("#"+emp).html("loading...");
+    /* To load the skills */
   $.post('/user/getEmployeeData/'+emp,function(data){
     if(data){
       $("#"+emp).html("");
@@ -27,7 +28,7 @@ $(document).ready(function(){
       $("#content"+emp).append('<div class="tab-pane fade" style="padding-top:2em" id="ce'+emp+'"></div>');
       $("#content"+emp).append('<div class="tab-pane fade" style="padding-top:2em" id="cl'+emp+'"></div>');
       
-      $("#skill"+emp).append('<table class="table table-striped">\
+      $("#skill"+emp).append('<table class="table table-hover">\
                                  <thead>\
                                  <tr>  \
                                  <th>Role</th>\
@@ -55,25 +56,24 @@ $(document).ready(function(){
       updateLevel();
       
       $("#ce"+emp).html("Loading...");
+      /* To load the certificates */
       $.post('/user/getEmployeeCertifications/'+emp , function(cert){
-        
         if(cert){
           $("#ce"+emp).html("");
           for(i=0;i<cert.length;i++){
-            $("#ce"+emp).append('<span style="border:1px solid #00ccee;padding:0.4em 1em;border-radius:0.3em">'+cert[i]+'</span>&emsp;');
+            $("#ce"+emp).append('<span class="cert-cli">'+cert[i]+'</span>&emsp;');
           }
         }
         
         $("#cl"+emp).html("Loading...");
+        /* To load the clients */
         $.post('/user/getEmployeeClients/'+emp , function(cli){
-        
           if(cli){
             $("#cl"+emp).html("");
             for(i=0;i<cli.length;i++){
-              $("#cl"+emp).append('<span style="border:1px solid #00ccee;padding:0.4em 1em;border-radius:0.3em">'+cli[i]+'</span>&emsp;');
+              $("#cl"+emp).append('<span class="cert-cli">'+cli[i]+'</span>&emsp;');
             }
           }
-        
         });
         
       });
@@ -82,7 +82,7 @@ $(document).ready(function(){
     });
   }
 
- function submitLevel(){
+  function submitLevel(){
     $(".up-lv-submit").unbind().click(function(){
       var skillId = $(this).attr("data-skillId");
       var user = $(this).attr("data-user");
@@ -102,29 +102,77 @@ $(document).ready(function(){
     }); 
 
 
-$(".up-lv-cancel").unbind().click(function(){
-      var skillId = $(this).attr("data-skillId");
-      var user = $(this).attr("data-user");
-      var level = $("#lv"+skillId).val();
-      $("#"+skillId).html("").append('&nbsp;<button class="up-lv btn btn-info" data-skillId="'+skillId+'" data-user="'+user+'">Update</button>');
-      updateLevel();
-    });
+   $(".up-lv-cancel").unbind().click(function(){
+     var skillId = $(this).attr("data-skillId");
+     var user = $(this).attr("data-user");
+     var level = $("#lv"+skillId).val();
+     $("#"+skillId).html("").append('&nbsp;<button class="up-lv btn btn-info" data-skillId="'+skillId+'" data-user="'+user+'">Update</button>');
+     updateLevel();
+   });
 
  }        
   
-$(".see-employee").unbind().click(function(){
+  $(".see-employee").unbind().click(function(){
     var emp = $(this).attr('data-employee');
     if($("#"+emp).html()==""){
       getEmpData(emp);
     }
-  
-    if($("#"+emp).is(":visible")){
-      $(".employee-skills").hide();  
-    } else {
-      $(".employee-skills").hide();
-      $("#"+emp).show();
-      }
   });
+         
+  /* Search Algorithm */
+  $("#search-bar").keyup(function(){
+
+    $("#search-result").html("Searching...");
+    var q = $(this).val();
+    q = q.replace(/\s\s+/g, ' ');
+    q = q.split(" ");
+    
+    
+    if(q[q.length-1]=="" || q[q.length-1]==" " ) { 
+      q = q.slice(0,q.length-1); 
+    }
+    
+    var count=[];
+    for(i=0;i<emps.length;i++){
+      count[i]={val:0 , index:i};
+      for(j=0;j<q.length;j++){
+        if(emps[i].name.indexOf(q[j].toUpperCase()) != -1) { count[i].val++; }
+      }
+    }
+
+    var min , temp;
+    for (i = 0; i < count.length; ++i)
+    {
+      min = i;
+      for (j = i+1; j < count.length; ++j)
+      {
+        if(count[j].val<count[min].val){min=j;}
+      }
+      if(min!=i){
+        temp = count[i];
+        count[i] = count[min];
+        count[min] = temp;
+      }
+    }
+              
+    $("#search-result").html('<b style="color:black">Search results:</b><br>');
+    if(count[count.length-1].val==0){
+      $("#search-result").append('<span style="color:black">No results</span>');
+    }
+    for(i=count.length-1;i>=0;i--){
+      if(count[i].val != 0){
+        $("#search-result").append('<a data-click="btn'+emps[count[i].index].id+'" class="result-element-click" style="text-decoration:none"><div class="panel panel-primary result-element">'+emps[count[i].index].name+'</div></a>');
+      } else {
+        break;
+      }
+    }
+              
+    $(".result-element-click").unbind().click(function(){
+      $("#"+$(this).attr('data-click')).click();
+      $("#search-modal").modal('hide');
+    });
+              
+  });
+    
             
-          
 })     

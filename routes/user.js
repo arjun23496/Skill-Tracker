@@ -51,7 +51,16 @@ router.get('/employee' , function(req,res,next){
         Skills.find({},function(err,skills){
           Certification.findOne({},function(err,c){
             Client.findOne({},function(err,cl){
-              res.render('employee' , {user:user , skills:skills , certificates:c , clients:cl});
+
+              var r=[] , n=[] , t=[];
+              for(i=0;i<user.skills.length;i++){
+                if(r.indexOf(user.skills[i].role) == -1) { r.push(user.skills[i].role); }
+                if(r.indexOf(user.skills[i].skillName) == -1) { n.push(user.skills[i].skillName); }
+                t.push(user.skills[i].skillType);
+              }
+              console.log(r,n,t);
+
+              res.render('employee' , {user:user , skills:skills , certificates:c , clients:cl ,r:r , n:n , t:t});
             });
           });
         });
@@ -145,6 +154,36 @@ router.post('/skillSubmit',function(req,res,next){
       
     });
     
+  }
+});
+
+router.post('/deleteSkill/:skillId',function(req,res){
+  if(obj.siStatus(req,obj,obj.cookieKey)){
+
+    User.findOne({_id:req.body.user} , function(err,user){
+      if(user){
+        var skillId = req.params.skillId;
+        for(i=0;i<user.skills.length;i++){
+          if(user.skills[i]._id == skillId) { break; }
+        }
+
+        if(i==user.skills.length){
+          res.send(false);
+        } else {
+          user.skills.splice(i,1);
+          user.save(function(err){
+            if(err) throw err;
+            res.send(true);
+          });
+        }
+
+      } else {
+        res.send(false);
+      }
+    });
+
+  } else {
+    res.redirect('/');
   }
 });
 

@@ -26,7 +26,7 @@ function getEmpData(emp){
                       <td>'+data[i].skillType+'</td>\
                       <td>'+data[i].level+'</td>\
                       <td>'+data[i].exp+' yrs</td>\
-                      <td><span id="'+data[i]._id+'">&nbsp;&nbsp;<button class="up-lv btn btn-info" data-skillId="'+data[i]._id+'" data-user="'+emp+'">Update</button></span></td>\
+                      <td><span id="'+data[i]._id+'">&nbsp;&nbsp;<button class="up-lv btn btn-info" data-skillId="'+data[i]._id+'" data-user="'+emp+'">Update</button>&nbsp;<button class="btn delete-skill" data-skillId="'+data[i]._id+'" data-user="'+emp+'" style="color:white;background:#d9534f"><span class="glyphocon glyphicon-minus"></span></button></span></td>\
                       </tr>');
         }
       
@@ -54,6 +54,7 @@ function getEmpData(emp){
                                   
 
         uplv();
+        deleteSkill();
       
     });
   }
@@ -94,6 +95,7 @@ function sessionSkills(emp){
 
 
  function uplv(){          
+   
     $(".up-lv").unbind().click(function(){
       var skillId = $(this).attr("data-skillId");
       var user = $(this).attr("data-user");
@@ -105,6 +107,31 @@ function sessionSkills(emp){
               
     });
   }
+
+function deleteSkill(){
+  
+  $(".delete-skill").unbind().click(function(){
+
+    $("#modal-note").html('');
+    $("#modal-delete-btn").attr({'data-skillId':$(this).attr('data-skillId') , 'data-user':$(this).attr('data-user')});
+    $("#delete-skill-modal").modal();
+
+    $("#modal-delete-btn").click(function(){
+      var emp = $(this).attr('data-user');
+      $("#modal-note").html('Deleting...&emsp;');
+      $.post('/user/deleteSkill/'+$(this).attr('data-skillId'), {user:emp} , function(data){
+        if(data){
+          $("#delete-skill-modal").modal('hide');
+          getEmpData(emp);
+        } else {
+          $("#modal-note").html('Error while deleting &emsp;');
+        }
+      });
+    });
+
+  });
+  
+}
 
   function submitLevel(){
     $(".up-lv-submit").unbind().click(function(){
@@ -134,8 +161,9 @@ function sessionSkills(emp){
       var skillId = $(this).attr("data-skillId");
       var user = $(this).attr("data-user");
       var level = $("#lv"+skillId).val();
-      $("#"+skillId).html("").append('&nbsp;<button class="up-lv btn btn-info" data-skillId="'+skillId+'" data-user="'+user+'">Update Level</button>');
+      $("#"+skillId).html("").append('&nbsp;<button class="up-lv btn btn-info" data-skillId="'+skillId+'" data-user="'+user+'">Update</button>&nbsp;<button class="btn delete-skill" data-skillId="'+skillId+'" style="color:white;background:#d9534f"><span class="glyphocon glyphicon-minus"></span></button>');
       uplv();
+      deleteSkill();
     });
 
   } 

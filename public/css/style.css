@@ -131,3 +131,26 @@ nav a : hover {
   color: white !important;
 }
 
+.m-employee-name{
+  border-bottom:3px solid #00ccff;
+  font-size: 250%;
+}
+
+.result-element{
+  margin-bottom:5px;
+  padding:0.5em 1em;
+  font-size:130%;
+  border:0;
+  border-bottom: 1px solid blue;
+} 
+
+.result-element:hover{
+  box-shadow: 0 0 10px black , 0 0 3px black;
+}
+
+.cert-cli{
+  background-color: white;
+  border:1px solid #00ccee;
+  padding:0.4em 1em;
+  border-radius:0.3em;
+}
