@@ -122,6 +122,8 @@ $(document).ready(function(){
   /* Search Algorithm */
   $("#search-bar").keyup(function(){
 
+    $("#search-trigger").click();
+
     $("#search-result").html("Searching...");
     var q = $(this).val();
     q = q.replace(/\s\s+/g, ' ');

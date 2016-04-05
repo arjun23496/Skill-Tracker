@@ -111,25 +111,28 @@ function sessionSkills(emp){
 function deleteSkill(){
   
   $(".delete-skill").unbind().click(function(){
+    var skillId = $(this).attr('data-skillId');
+    $("#modal-note-"+skillId).html('');
+    //$("#modal-delete-btn").attr({'data-skillId':$(this).attr('data-skillId') , 'data-user':$(this).attr('data-user')});
+    $("#delete-skill-modal-"+skillId).modal();
 
-    $("#modal-note").html('');
-    $("#modal-delete-btn").attr({'data-skillId':$(this).attr('data-skillId') , 'data-user':$(this).attr('data-user')});
-    $("#delete-skill-modal").modal();
+    });
 
-    $("#modal-delete-btn").click(function(){
+    $(".modal-delete-btn").unbind().click(function(){
       var emp = $(this).attr('data-user');
-      $("#modal-note").html('Deleting...&emsp;');
-      $.post('/user/deleteSkill/'+$(this).attr('data-skillId'), {user:emp} , function(data){
+      var skillId = $(this).attr('data-skillId');
+      $("#modal-note-"+skillId).html('Deleting...&emsp;');
+      $.post('/user/deleteSkill/'+skillId, {user:emp} , function(data){
         if(data){
-          $("#delete-skill-modal").modal('hide');
+          $("#delete-skill-modal-"+skillId).modal('hide');
           getEmpData(emp);
         } else {
-          $("#modal-note").html('Error while deleting &emsp;');
+          $("#modal-note-"+skillId).html('Error while deleting &emsp;');
         }
       });
     });
 
-  });
+  
   
 }
 

@@ -20,9 +20,9 @@ var ldap = require('ldapjs')
 
 //For ldap
 var userFound=false;
-var ldapConfig=require('../config/ldap.js');
+/*var ldapConfig=require('../config/ldap.js');
 
-var ldapClient = ldap.createClient(ldapConfig.options);
+var ldapClient = ldap.createClient(ldapConfig.options);*/
 
 router.post('/test',function(req,res){
 
@@ -51,7 +51,7 @@ router.get('/', function(req, res, next) {
 
 
 
-router.post('/login1',function(req,res){
+router.post('/login',function(req,res){
 
   var email = req.body.email;
 
@@ -82,7 +82,7 @@ router.post('/login1',function(req,res){
 
 
 /* This block is to validate the Login event */
-router.post('/login',function(req,res,next){
+router.post('/login1',function(req,res,next){
 
   /*
   email = email entered in the form
@@ -372,26 +372,5 @@ router.get('/delete',function(req,res){
 router.get('/reports',function(req,res){
   res.render('reports');
 });
-
-/* 
-To send the status of 'user' cookie 
-true if cookie doesnot exist
-false if the cookie exist
-*/
-router.post('/cookieStatus',function(req,res){
-  if(obj.siStatus(req,obj,obj.cookieKey)){
-    res.send(false)
-  } else {
-    res.send("1");
-  }
-});
-router.post('/adminCookieStatus',function(req,res){
-  if(req.signedCookies.admin){
-    res.send(false)
-  } else {
-    res.send("1");
-  }
-});
-
 
 module.exports = router;

@@ -87,13 +87,16 @@ router.post('/skillSubmit',function(req,res,next){
       else{
 
         var duplicate = 0;
+        var role = req.body.role;
+        var skill = req.body.skill;
+        var type = req.body.type;
 
         /* 
         To check for dupicate skills 
         duplicate is set to 1 if similar skill exists
         */
         for(i=0;i<user.skills.length;i++){
-            if(user.skills[i].role==req.body.role && user.skills[i].skillName==req.body.skill && user.skills[i].skillType==req.body.type){
+            if(user.skills[i].role==role && user.skills[i].skillName==skill && user.skills[i].skillType==type){
               duplicate = 1;
               break;
             }
@@ -105,18 +108,18 @@ router.post('/skillSubmit',function(req,res,next){
 
           /* Saving the skill if not duplicate */      
           user.skills.push({
-            role: req.body.role,
-            skillName: req.body.skill,
-            skillType: req.body.type,
+            role: role,
+            skillName: skill,
+            skillType: type,
             level: req.body.level,
             exp: req.body.exp,
             createdDate: d
           });
 
           user.sessionSkills.push({
-            role: req.body.role,
-            skillName: req.body.skill,
-            skillType: req.body.type,
+            role: role,
+            skillName: skill,
+            skillType: type,
             level: req.body.level,
             exp: req.body.exp,
           });
@@ -131,7 +134,7 @@ router.post('/skillSubmit',function(req,res,next){
               /* Updating the notifications of the connected manager */
               mUser.Updated = 1;
               mUser.Updates.push({
-                notify: user.name+" add new skills",
+                notify: user.name+" has added "+type+" skill to "+req.body.level,
                 seen: 0,
                 createdDate: d
               });
@@ -377,7 +380,7 @@ router.post('/updateLevel', function(req,res,next) {
               if(level != "select"){
                 user.Updated = 1;
                 user.Updates.push({
-                  notify: "Manager updated the level of "+allSkills[i].role+"-"+allSkills[i].skillName+"-"+allSkills[i].skillType+" from "+oldLevel+" to "+level,
+                  notify: "Manager has changed "+allSkills[i].skillType+" skill from "+oldLevel+" to "+level,
                   seen: 0,
                   createdDate: d
                 });
@@ -386,7 +389,7 @@ router.post('/updateLevel', function(req,res,next) {
               if(exp != "select"){
                 user.Updated = 1;
                 user.Updates.push({
-                  notify: "Manager updated the experience of "+allSkills[i].role+"-"+allSkills[i].skillName+"-"+allSkills[i].skillType+" from "+oldExp+" to "+exp,
+                  notify: "Manager has changed exp of "+allSkills[i].skillType+" skill from "+oldExp+" to "+exp,
                   seen: 0,
                   createdDate: d
                 });
@@ -413,7 +416,7 @@ router.post('/updateLevel', function(req,res,next) {
                 if(level != "select"){
                   U.Updated = 1;
                   U.Updates.push({
-                    notify: user.name+" updated the level of "+allSkills[i].role+"-"+allSkills[i].skillName+"-"+allSkills[i].skillType+" from "+oldLevel+" to "+level,
+                    notify: user.name+" has changed "+allSkills[i].skillType+" skill from "+oldLevel+" to "+level,
                     seen: 0,
                     createdDate: d
                   });
@@ -422,7 +425,7 @@ router.post('/updateLevel', function(req,res,next) {
                 if(exp != "select"){
                   U.Updated = 1;
                   U.Updates.push({
-                    notify: user.name+" updated the experience of "+allSkills[i].role+"-"+allSkills[i].skillName+"-"+allSkills[i].skillType+" from "+oldExp+" to "+exp,
+                    notify: user.name+" has changed exp of "+allSkills[i].skillType+" skill from "+oldExp+" to "+exp,
                     seen: 0,
                     createdDate: d
                   });

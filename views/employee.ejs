@@ -88,7 +88,7 @@
       <!--List of choices on left side of the webpage-->
       <ul class="nav nav-pills nav-stacked">
         <li class="active"><a data-toggle="tab" href="#home">Home</a></li>
-        <li><a data-toggle="tab" href="#edit">Edit Skills</a></li>
+        <li><a data-toggle="tab" href="#edit">Edit</a></li>
       </ul>  
     </div>
       
@@ -276,7 +276,7 @@
           
           <div class="container-fluid">
             <div class="panel panel-default">
-              <a id="display-edit-skills" style="text-decoration:none;"><div class="panel-heading">Edit Skills</div></a>
+              <a id="display-edit-skills" style="text-decoration:none;"><div class="panel-heading">Edit</div></a>
               <div class="panel-body" style="display:none" id="<%=user._id%>">
             
               </div>
@@ -303,21 +303,30 @@
           });
           </script>
 
-
-          <div class="modal fade" id="delete-skill-modal" role="dialog" style="margin-top:5em;">
+          <% for(i=0;i<user.skills.length;i++) { %>
+          <div class="modal fade" id="delete-skill-modal-<%=user.skills[i]._id%>" role="dialog" style="margin-top:5em;">
             <div class="modal-dialog">
               <div class="modal-content">
                 <div class="modal-header" style="background:red">
                   <button type="button" class="close" data-dismiss="modal">&times;</button>
-                  <h4 class="modal-title" style="color:white;">Do you really want delete this   skill?</h4>
+                  <h4 class="modal-title" style="color:white;">Do you really want delete this skill?</h4>
                 </div>
                 <div class="modal-footer">
-                  <span id="modal-note" style="color:red;"></span>
-                  <button id="modal-delete-btn" data-skillId="" data-user="" type="button"  class="btn btn-danger">Delete</button>
+                  <table class="table table-striped">
+                    <thead>
+                      <tr><th>Role</th><th>Skill</th><th>Type</th><th>Level</th><th>Experience</th></tr>
+                    </thead>
+                    <tbody style="text-align:left">
+                      <tr><td><%=user.skills[i].role%></td><td><%=user.skills[i].skillName%></td><td><%=user.skills[i].skillType%></td><td><%=user.skills[i].level%></td><td><%=user.skills[i].exp%></td></tr>
+                    </tbody>
+                  </table>
+                  <span id="modal-note-<%=user.skills[i]._id%>" style="color:red;"></span>
+                  <button data-skillId="<%=user.skills[i]._id%>" data-user="<%=user._id%>" type="button"  class="btn btn-danger modal-delete-btn">Delete</button>
                 </div>
               </div>
             </div>
           </div>
+          <% } %>
 
         </div>
         <script src="/js/jquery-employee.js" type="text/javascript"></script>

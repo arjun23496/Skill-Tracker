@@ -42,12 +42,16 @@ router.get('/', function(req, res, next) {
 	},
 
 	{
-		name: "Employee1",
-		email: "employee1@email.com" ,
-		password: obj.hash("employee1"),
-		isManager: 0,
-		connectedTo: [],
-		Updated:0
+		"name":"Employee1",
+		"email":"employee1@email.com",
+		"isManager":false,
+		"Updated":false,"__v":6,
+		"Updates":[],
+		"clients":[],
+		"certificates":[],
+		"sessionSkills":[],
+		"skills":[{"role":"Management","skillName":"Resource","skillType":"Employee Manage","level":"Beginner","exp":"4","createdDate":"2016-04-05T06:48:44.609Z","_id":"57035fccd66e2a250e5b52c4"},{"role":"Developer","skillName":"Testing","skillType":"Manual","level":"Beginner","exp":"4","createdDate":"2016-04-05T06:48:55.574Z","_id":"57035fd7d66e2a250e5b52c8"},{"role":"Developer","skillName":"Coding","skillType":"Java","level":"Intermediate","exp":"5","createdDate":"2016-04-05T06:49:07.568Z","_id":"57035fe3d66e2a250e5b52cc"},{"role":"Developer","skillName":"Coding","skillType":"C#","level":"Beginner","exp":"9","createdDate":"2016-04-05T06:49:27.852Z","_id":"57035ff7d66e2a250e5b52d0"},{"role":"Management","skillName":"Customer Handling","skillType":"Client Success","level":"Intermediate","exp":"2","createdDate":"2016-04-05T06:49:41.089Z","_id":"57036005d66e2a250e5b52d4"}],
+		"connectedTo":[]
 	},
 
 	{
