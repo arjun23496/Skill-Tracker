@@ -16,6 +16,13 @@ var Client = require('../models/Client.js');
 var obj = require('./obj');
 var createUser = require('./createUser');
 var fs = require('fs');
+var ldap = require('ldapjs')
+
+//For ldap
+var userFound=false;
+var ldapConfig=require('../config/ldap.js');
+
+var ldapClient = ldap.createClient(ldapConfig.options);
 
 router.post('/test',function(req,res){
 
@@ -44,7 +51,7 @@ router.get('/', function(req, res, next) {
 
 
 
-router.post('/login',function(req,res){
+router.post('/login1',function(req,res){
 
   var email = req.body.email;
 
@@ -75,7 +82,7 @@ router.post('/login',function(req,res){
 
 
 /* This block is to validate the Login event */
-router.post('/LDAPlogin',function(req,res,next){
+router.post('/login',function(req,res,next){
 
   /*
   email = email entered in the form
@@ -90,10 +97,59 @@ router.post('/LDAPlogin',function(req,res,next){
 
   =================*/
 
-  //var verified = /* boolean after authentication */;
+
+    var opts = {
+      filter: ldapConfig.usernameAttribute+'='+email,
+      scope: 'sub',
+      attributes: ['dn']
+    };
+  
+    ldapClient.search(ldapConfig.baseDN,opts, function(err, result) {
+      
+      result.on('searchEntry', function(entry) {
+
+        if(!userFound)
+        {
+          userFound=true;        
+          var bindParams=entry['dn'];
+
+          ldapClient.bind(bindParams, password, function(err) {     
+          if(!err)
+          {
+            var verified=true;
+            additionalCheck(verified,email,password,req,res,next)
+          }
+          else    
+          {
+            var verified=false;
+            additionalCheck(verified,email,password,req,res,next)
+          }
+        });
+
+        }
+      });
+      result.on('searchReference', function(referral) {
+        console.log('referral: ' + referral.uris.join());
+      });
+      result.on('error', function(err) {
+        console.error('error: ' + err.message);
+        res.send(err.message);
+      });
+      result.on('end', function(result) {
+        if(!userFound)
+        {
+          var verified=false;
+          additionalCheck(verified,email,password,req,res,next)
+        }
+      });
+    });
+
+});
 
 
-  if(verified){
+function additionalCheck(verified,email,password,req,res,next)
+{
+    if(verified){
 
     User.findOne({email:email} , function(err,user){
       if(!user){
@@ -120,9 +176,7 @@ router.post('/LDAPlogin',function(req,res,next){
   } else {
     res.redirect('/');
   }
-
-});
-
+}
 
 /* To clear the 'user' cookie in the Logout event */
 router.get('/logout',function(req,res,next){
