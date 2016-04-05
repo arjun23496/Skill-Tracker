@@ -82,6 +82,7 @@ router.post('/login',function(req,res){
 
 
 /* This block is to validate the Login event */
+/* LDAP authentication */
 router.post('/login1',function(req,res,next){
 
   /*
@@ -90,12 +91,6 @@ router.post('/login1',function(req,res,next){
   */
   var email = req.body.email;
   var password = req.body.password;
-
-  /*===============
-  
-  Do your LDAP authentication here
-
-  =================*/
 
 
     var opts = {
@@ -107,39 +102,36 @@ router.post('/login1',function(req,res,next){
     ldapClient.search(ldapConfig.baseDN,opts, function(err, result) {
       
       result.on('searchEntry', function(entry) {
-
-        if(!userFound)
-        {
+        if(!userFound) {
           userFound=true;        
           var bindParams=entry['dn'];
 
           ldapClient.bind(bindParams, password, function(err) {     
-          if(!err)
-          {
+          if(!err) {
             var verified=true;
-            additionalCheck(verified,email,password,req,res,next)
-          }
-          else    
-          {
+            additionalCheck(verified,email,req,res,next)
+          } else {
             var verified=false;
-            additionalCheck(verified,email,password,req,res,next)
+            additionalCheck(verified,email,req,res,next)
           }
         });
 
         }
       });
+
       result.on('searchReference', function(referral) {
         console.log('referral: ' + referral.uris.join());
       });
+
       result.on('error', function(err) {
         console.error('error: ' + err.message);
         res.send(err.message);
       });
+      
       result.on('end', function(result) {
-        if(!userFound)
-        {
+        if(!userFound) {
           var verified=false;
-          additionalCheck(verified,email,password,req,res,next)
+          additionalCheck(verified,email,req,res,next)
         }
       });
     });
@@ -147,7 +139,7 @@ router.post('/login1',function(req,res,next){
 });
 
 
-function additionalCheck(verified,email,password,req,res,next)
+function additionalCheck(verified,email,req,res,next)
 {
     if(verified){
 
