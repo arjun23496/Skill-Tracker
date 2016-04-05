@@ -1,7 +1,5 @@
 # Skill Tracker
 
-NOTE: This does not have any authentication for login.You need to design your authentication.
-
 Before using the Web App read the following instructions
 
 After doing $npm install and $npm start 
