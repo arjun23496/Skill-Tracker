@@ -214,34 +214,46 @@ router.post('/addCertificate',function(req,res){
       var d = new Date();
       Certification.findOne({},function(err,certificates){
         
-        
-        var flag = false;
-        for (i = 0; i < certificates.data.length; i++) {
-          if(certificates.data[i].toUpperCase() == cert.toUpperCase()){
-            flag = true;
-            break;
-          }
-        };
+        if(certificates){
+          var flag = false;
+          for (i = 0; i < certificates.data.length; i++) {
+            if(certificates.data[i].toUpperCase() == cert.toUpperCase()){
+              flag = true;
+              break;
+            }
+          };
 
-        /* This if() is true if the certificate does not exist in database */
-        if(!flag){
-          
-          certificates.data.push(cert);
-          certificates.save(function(err){ 
-            if(err) throw err ; 
+          /* This if() is true if the certificate does not exist in database */
+          if(!flag){
             
-            /*Recording this event in AdminLogs*/
-            AdminLogs({
-               record: "Admin added new certificate "+cert,
-               createdDate: d
-             }).save(function(err){
-                     if(err) throw err;
-                     res.send(true);
-                   });  
+            certificates.data.push(cert);
+            certificates.save(function(err){ 
+              if(err) throw err ; 
+              
+              /*Recording this event in AdminLogs*/
+              AdminLogs({
+                 record: "Admin added new certificate "+cert,
+                 createdDate: d
+               }).save(function(err){
+                       if(err) throw err;
+                       res.send(true);
+                     });  
 
-          });
+            });
+          } else {
+            res.send(false);
+          }
         } else {
-          res.send(false);
+          Certification({data:[cert]}).save(function(err){
+            if(err) throw err;
+            AdminLogs({
+                 record: "Admin added new certificate "+cert,
+                 createdDate: d
+               }).save(function(err){
+                       if(err) throw err;
+                       res.send(true);
+                     });
+          });
         }
       });
     } else {
@@ -264,33 +276,45 @@ router.post('/addClient',function(req,res){
       var d = new Date();
       
       Client.findOne({},function(err,clients){
-        
-        var flag = false;
-        for (i = 0; i < clients.data.length; i++) {
-          if(clients.data[i].toUpperCase() == cli.toUpperCase()){
-            flag = true;
-            break;
+        if(clients){
+          var flag = false;
+          for (i = 0; i < clients.data.length; i++) {
+            if(clients.data[i].toUpperCase() == cli.toUpperCase()){
+              flag = true;
+              break;
+            }
+          };
+
+          /* This if() is true if the client does not exist in database */
+          if(!flag){
+            clients.data.push(cli);
+            clients.save(function(err){ 
+              if(err) throw err ; 
+
+              /*Recording this event in AdminLogs*/
+              AdminLogs({
+                 record: "Admin added new client "+cli,
+                 createdDate: d
+               }).save(function(err){
+                       if(err) throw err;
+                       res.redirect('/admin');
+                     }); 
+
+            });
+          } else {
+            res.send(false);
           }
-        };
-
-        /* This if() is true if the client does not exist in database */
-        if(!flag){
-          clients.data.push(cli);
-          clients.save(function(err){ 
-            if(err) throw err ; 
-
-            /*Recording this event in AdminLogs*/
-            AdminLogs({
-               record: "Admin added new client "+cli,
-               createdDate: d
-             }).save(function(err){
-                     if(err) throw err;
-                     res.redirect('/admin');
-                   }); 
-
-          });
         } else {
-          res.send(false);
+          Client({data:[cli]}).save(function(err){
+            if(err) throw err;
+            AdminLogs({
+                 record: "Admin added new client "+cli,
+                 createdDate: d
+               }).save(function(err){
+                       if(err) throw err;
+                       res.redirect('/admin');
+                     });
+          });
         }
       });
     } else {
