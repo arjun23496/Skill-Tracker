@@ -19,10 +19,10 @@ var fs = require('fs');
 var ldap = require('ldapjs')
 
 //For ldap
-var userFound=false;
+/*var userFound=false;
 var ldapConfig=require('../config/ldap.js');
 
-var ldapClient = ldap.createClient(ldapConfig.options);
+var ldapClient = ldap.createClient(ldapConfig.options);*/
 
 router.post('/test',function(req,res){
 

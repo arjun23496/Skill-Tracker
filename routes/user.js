@@ -196,23 +196,67 @@ router.post('/certificateUpdate',function(req,res){
   if(userid){
     User.findOne({email:userid},function(err,user){
       var d = new Date();
-      user.certificates = req.body.certificate;
+      var updatedCertificates = req.body.certificate;
+
+      
+      if(updatedCertificates){
+        // checking for the new certificates added
+        var newAdded = [];
+        for(i=0;i<updatedCertificates.length;i++){
+          if(user.certificates.indexOf(updatedCertificates[i]) == -1){
+            newAdded.push(updatedCertificates[i]);
+          }
+        }
+
+        // checking for removed certificates
+        var removed = [];
+        for(i=0;i<user.certificates.length;i++){
+          if(updatedCertificates.indexOf(user.certificates[i]) == -1){
+            removed.push(user.certificates[i]);
+          }
+        }
+      } else {
+        var removed = user.certificates;
+      }
+
+
+      user.certificates = updatedCertificates;
       user.save(function(err){
         if(err) throw err;
 
         if(user.connectedTo.length){
             User.findOne({_id:user.connectedTo} , function(error , mUser){
-          
               /* Updating the notifications of the connected manager */
-              mUser.Updated = 1;
-              mUser.Updates.push({
-                notify: user.name+" updated the Certifications",
-                seen: 0,
-                createdDate: d
-              });
+              if(removed.length){
+                mUser.Updated = 1;
+                mUser.Updates.push({
+                  notify: user.name+" removed Certifications "+removed,
+                  seen: 0,
+                  createdDate: d
+                });
+                Logs({
+                  record: user.name+" removed Certifications "+removed,
+                  createdDate: d
+                }).save(function(err){if(err) throw err;});
+
+              }
+
+              if(newAdded.length){
+                mUser.Updated = 1;
+                mUser.Updates.push({
+                  notify: user.name+" added Certifications "+newAdded,
+                  seen: 0,
+                  createdDate: d
+                });             
+                Logs({
+                  record: user.name+" added Certifications "+newAdded,
+                  createdDate: d
+                }).save(function(err){if(err) throw err;});   
+              }
+              
               mUser.save(function(err){
                 if(err) throw err;
-                res.redirect('/user');
+                res.redirect('/user/employee')
               });
             });
           }
@@ -231,19 +275,62 @@ router.post('/clientUpdate',function(req,res){
   if(userid){
     User.findOne({email:userid},function(err,user){
       var d = new Date();
-      user.clients = req.body.clients;
+      var updatedClients = req.body.clients;
+
+      if(updatedClients){
+        // checking for the new clients added
+        var newAdded = [];
+        for(i=0;i<updatedClients.length;i++){
+          if(user.clients.indexOf(updatedClients[i]) == -1){
+            newAdded.push(updatedClients[i]);
+          }
+        }
+
+        // checking for removed clients
+        var removed = [];
+        for(i=0;i<user.clients.length;i++){
+          if(updatedClients.indexOf(user.clients[i]) == -1){
+            removed.push(user.certificates[i]);
+          }
+        }
+      } else {
+        var removed = user.clients;
+      }
+
+
+      user.clients = updatedClients;
       user.save(function(err){
         if(err) throw err;
         if(user.connectedTo.length){
             User.findOne({_id:user.connectedTo} , function(error , mUser){
           
               /* Updating the notifications of the connected manager */
-              mUser.Updated = 1;
-              mUser.Updates.push({
-                notify: user.name+" updated the Clients",
-                seen: 0,
-                createdDate: d
-              });
+              if(removed.length){
+                mUser.Updated = 1;
+                mUser.Updates.push({
+                  notify: user.name+" removed Clients "+removed,
+                  seen: 0,
+                  createdDate: d
+                });
+                Logs({
+                  record: user.name+" removed Clients "+removed,
+                  createdDate: d
+                }).save(function(err){if(err) throw err;});
+              }
+
+              if(newAdded.length){
+                mUser.Updated = 1;
+                mUser.Updates.push({
+                  notify: user.name+" added Clients "+newAdded,
+                  seen: 0,
+                  createdDate: d
+                });                
+                Logs({
+                  record: user.name+" added Clients "+newAdded,
+                  createdDate: d
+                }).save(function(err){if(err) throw err;});
+              }
+
               mUser.save(function(err){
                 if(err) throw err;
                 res.redirect('/user');

@@ -5,6 +5,7 @@ $(document).ready(function(){
         location.reload();
       }
       $('.badge').css('background','#777').html("0");
+      $("#title").html("Home");
     });
   });
           

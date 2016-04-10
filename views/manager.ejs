@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Home</title>
+    <title id="title">Home</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta charset="utf-8">
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
     <link rel='stylesheet' href='/css/bootstrap.css'>
     <link rel='stylesheet' href='/css/style.css'>
     <script src="/js/jquery-1.11.2.min.js" type="text/javascript"></script>
@@ -58,7 +59,7 @@
         <tbody>
           <% var count = 0 ; for(i=user.Updates.length-1;i>=0;i--){ %>
           <tr>
-            <td style="border:0;border-bottom:1px solid grey;<%if(!user.Updates[i].seen)  {%>color:blue;font-weight:bold<% count++;} else {%>color:black;<%}%>">
+            <td style="border:0;border-bottom:1px solid grey;<%if(!user.Updates[i].seen){%>color:#397993;font-weight:bold<% count++;} else {%>color:black;<%}%>">
               <span style="font-size:110%"><%=user.Updates[i].notify%></span><br><span  style="color:grey"><%=user.Updates[i].createdDate%></span>  
             </td>
           </tr>
@@ -76,23 +77,20 @@
 
     <script>
     $(document).ready(function(){
-
       $(".badge").html("<%=count%>")
-
       $("[data-toggle=popover]").popover({
         html : true,
         content: function() {
           return $("#popover-content").html();
         },
-        container: 'body'
-
-        ,
+        container: 'body',
         title: function() {;
           return "<b>Notifications</b>";
         }
-    });
-
-
+      });
+      if(<%=count%>){
+        $("#title").html("(<%=count%>)Home");
+      }
     });
     </script>
 
@@ -118,6 +116,7 @@
           <div class="tab-pane fade in active" id="home">
             <h1 style="font-weight:bold;font-size:4em;text-align:center">Welcome <%=user.name%>!</h1><br>
             <div class="col-lg-8">
+              <h4>Search Employee:</h4>
               <input id="search-bar" class="form-control" style="border:0;border-bottom:2px solid grey;" placeholder="Start typing employee name here"><br>
               <div id="search-result" style="margin-top:0.5em">
               </div>

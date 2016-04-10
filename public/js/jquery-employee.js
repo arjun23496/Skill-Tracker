@@ -100,7 +100,7 @@ function sessionSkills(emp){
       var skillId = $(this).attr("data-skillId");
       var user = $(this).attr("data-user");
       $("#"+skillId).html("");
-      $("#"+skillId).append('&nbsp;<select id="lv'+skillId+'" class="btn btn-default"><option value="select">Select level</option><option value="Beginner">Beginner</option><option value="Intermediate">Intermediate</option><option value="Expert">Expert</option></select>&nbsp;<select id="exp'+skillId+'" class="btn btn-default"><option value="select">Select Experience(yrs)</option>'+$("#experience-options").html()+'<option value="15+">15+</option></select>&nbsp;<button class="up-lv-submit btn btn-primary" data-skillId="'+skillId+'" data-user="'+user+'">Save</button>&nbsp;<button class="up-lv-cancel btn btn-warning" data-skillId="'+skillId+'" data-user="'+user+'" >Cancel</button>');
+      $("#"+skillId).append('&nbsp;<select id="lv'+skillId+'" class="btn btn-default"><option value="select">Select level</option><option value="Beginner">Beginner</option><option value="Intermediate">Intermediate</option><option value="Expert">Expert</option></select>&nbsp;<select id="exp'+skillId+'" class="btn btn-default"><option value="select">Select Experience(yrs)</option>'+$("#experience-options").html()+'<option value="15+">15+</option></select><br><br><button class="up-lv-submit btn btn-primary" data-skillId="'+skillId+'" data-user="'+user+'">Save</button>&nbsp;<button class="up-lv-cancel btn btn-warning" data-skillId="'+skillId+'" data-user="'+user+'" >Cancel</button>');
               
 
       submitLevel();
