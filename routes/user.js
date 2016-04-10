@@ -253,7 +253,7 @@ router.post('/certificateUpdate',function(req,res){
                   createdDate: d
                 }).save(function(err){if(err) throw err;});   
               }
-              
+
               mUser.save(function(err){
                 if(err) throw err;
                 res.redirect('/user/employee')
@@ -439,11 +439,18 @@ router.post('/updateLevel', function(req,res,next) {
     var skillId = req.body.skillId;
     var exp = req.body.exp;
     var id = req.body.user;
+
+    function logUpdates(message,d){
+      Logs({
+         record: message,
+          createdDate: d
+        }).save(function(err){if(err) throw err;});
+    }
+
     User.findOne({ _id:id } , function(err,user){
 	 		
       var allSkills = user.skills;
       var d = new Date(); // noting the time of the event
-
       
       User.findOne({email:u} , function(err,currUser){
       
@@ -471,6 +478,9 @@ router.post('/updateLevel', function(req,res,next) {
                   seen: 0,
                   createdDate: d
                 });
+                logUpdates(
+                  currUser.name+" changed level of "+allSkills[i].skillType+" skill of "+user.name+" from "+oldLevel+" to "+level,
+                  d);
               }
 
               if(exp != "select"){
@@ -480,17 +490,10 @@ router.post('/updateLevel', function(req,res,next) {
                   seen: 0,
                   createdDate: d
                 });
+                logUpdates(
+                  currUser.name+" changed exp of "+allSkills[i].skillType+" skill of "+user.name+" from "+oldExp+" to "+exp,
+                  d);
               }
-
-              User.findOne({_id:user.connectedTo},function(err,U){
-                /* This event is recorded in the logs here */
-                Logs({
-                  record: U.name+" updated the skills of "+user.name,
-                  createdDate: d
-                }).save(function(err){if(err) throw err;});
-              });
-
-
             } 
 
             /* This block is executed when the employee is changing the level of skills */
@@ -507,6 +510,9 @@ router.post('/updateLevel', function(req,res,next) {
                     seen: 0,
                     createdDate: d
                   });
+                  logUpdates(
+                  user.name+" changed level of "+allSkills[i].skillType+" skill from "+oldLevel+" to "+level,
+                  d);
                 }
 
                 if(exp != "select"){
@@ -516,20 +522,16 @@ router.post('/updateLevel', function(req,res,next) {
                     seen: 0,
                     createdDate: d
                   });
+                  logUpdates(
+                  user.name+" changed exp of "+allSkills[i].skillType+" skill from "+oldExp+" to "+exp,
+                  d);
                 }
 
                 U.save(function(err){
-                  if(err) throw err;
+                    if(err) throw err;
+                  });
                 });
-                });
-            }
-
-                /* This event is recorded in the logs here */
-                Logs({
-                  record: user.name+" updated the level of his skills",
-                  createdDate: d
-                }).save(function(err){if(err) throw err;});
-
+              }
             }
             break;
           }
