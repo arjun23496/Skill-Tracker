@@ -16,7 +16,7 @@ var Client = require('../models/Client.js');
 var obj = require('./obj');
 var createUser = require('./createUser');
 var fs = require('fs');
-var ldap = require('ldapjs')
+var ldap = require('ldapjs');
 
 //For ldap
 var userFound=false;
@@ -29,10 +29,6 @@ router.post('/test',function(req,res){
   res.send(req.body.cer);
 
 });
-
-
-
-
 
 
 router.get('/', function(req, res, next) {
@@ -51,7 +47,7 @@ router.get('/', function(req, res, next) {
 
 
 
-router.post('/login',function(req,res){
+router.post('/login1',function(req,res){
 
   var email = req.body.email;
 
@@ -73,6 +69,7 @@ router.post('/login',function(req,res){
              
         } else {
           res.redirect('/user');
+          // res.redirect('/login1');
         }
       }
       
@@ -83,7 +80,7 @@ router.post('/login',function(req,res){
 
 /* This block is to validate the Login event */
 /* LDAP authentication */
-router.post('/login1',function(req,res,next){
+router.post('/login',function(req,res,next){
 
   /*
   email = email entered in the form
@@ -92,6 +89,7 @@ router.post('/login1',function(req,res,next){
   var email = req.body.email;
   var password = req.body.password;
 
+  userFound=false;
 
     var opts = {
       filter: ldapConfig.usernameAttribute+'='+email,
@@ -102,17 +100,25 @@ router.post('/login1',function(req,res,next){
     ldapClient.search(ldapConfig.baseDN,opts, function(err, result) {
       
       result.on('searchEntry', function(entry) {
+
+        console.log('Found');          
+
         if(!userFound) {
           userFound=true;        
           var bindParams=entry['dn'];
 
-          ldapClient.bind(bindParams, password, function(err) {     
+          console.log('Found_'+entry['dn']);          
+
+          ldapClient.bind(bindParams, password, function(err) {               
           if(!err) {
             var verified=true;
+            console.log('Login: ');
             additionalCheck(verified,email,req,res,next)
           } else {
+            console.log('False: ');
             var verified=false;
-            additionalCheck(verified,email,req,res,next)
+            // additionalCheck(verified,email,req,res,next)
+            res.redirect('/');
           }
         });
 
@@ -129,9 +135,12 @@ router.post('/login1',function(req,res,next){
       });
       
       result.on('end', function(result) {
+          console.log('End: ');
+        
         if(!userFound) {
           var verified=false;
-          additionalCheck(verified,email,req,res,next)
+          // additionalCheck(verified,email,req,res,next)
+          res.redirect('/');
         }
       });
     });
