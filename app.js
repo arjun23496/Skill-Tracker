@@ -8,6 +8,7 @@ var routes = require('./routes/index');
 var create = require('./routes/create');
 var user = require('./routes/user');
 var admin = require('./routes/admin');
+var AndroidApp = require('./routes/AndroidApp');
 
 var app = express();
 
@@ -37,6 +38,7 @@ app.use('/', routes);
 app.use('/create',create);
 app.use('/user',user);
 app.use('/admin',admin);
+app.use('/app',AndroidApp);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

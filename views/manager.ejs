@@ -123,7 +123,6 @@
             </div>
           </div>
           
-          
           <%for(i=0 ; i<eUser.length ; i++){ %>
           <% if(eUser[i].skills.length || eUser[i].certificates.length || eUser[i].clients.length ){ %>
           <div class="tab-pane fade" id="tab<%=eUser[i]._id%>">
@@ -141,15 +140,9 @@
           <% } %>
 
         </div>
-      
       </div>
-      
-      
     </div>
-
     <script src="/js/jquery-manager.js" type="text/javascript"></script>
-    
     <div class="hide" id="experience-options"><% for(i=0;i<=15;i++) { %><option value="<%=i%>"><%=i%></option><% } %></div>
-    
   </body>
 </html>
