@@ -48,6 +48,8 @@ router.post('/login',function(req,res,next){
       attributes: ['dn']
     };
   
+    userFound=false;
+
     ldapClient.search(ldapConfig.baseDN,opts, function(err, result) {
       
       result.on('searchEntry', function(entry) {
