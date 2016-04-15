@@ -87,7 +87,6 @@ router.post('/login',function(req,res,next){
 
 });
 
-
 function additionalCheck(verified,email,req,res,next)
 {
     if(verified){
